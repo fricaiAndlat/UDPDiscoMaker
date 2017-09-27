@@ -13,5 +13,6 @@ public interface Effect {
 
     public void init(int nleds, String args);
     public void update(long time, int step, byte[] data);
+    public void kill();
 
 }

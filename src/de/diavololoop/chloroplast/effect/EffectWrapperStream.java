@@ -2,6 +2,7 @@ package de.diavololoop.chloroplast.effect;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -27,39 +28,33 @@ public class EffectWrapperStream implements Effect {
     public EffectWrapperStream(File file) throws IOException {
 
         streamFile = file.getAbsolutePath();
-        command = new String(Files.readAllBytes(file.toPath()), UTF_8);
+        String[] streamInfo = new String(Files.readAllBytes(file.toPath()), UTF_8).split("\n");
+        if(streamInfo.length < 2){
+            throw new IOException("the given meta in stream file not contains name:description:author\\ncommand");
+        }
+        String[] metaInfo = streamInfo[0].trim().split(":");
+        if(metaInfo.length != 3){
+            throw new IOException("the given meta in stream file not contains name:description:author\\ncommand");
+        }
+        name        = metaInfo[0];
+        description = metaInfo[1];
+        author      = metaInfo[2];
 
-        Process p = Runtime.getRuntime().exec(command);
-
-        input = new BufferedReader(new InputStreamReader(p.getInputStream(), UTF_8));
-        output = new OutputStreamWriter(p.getOutputStream(), UTF_8);
-
-        testForVersion();
-        readMeta();
-
-
-
+        command     = streamInfo[1];
     }
 
     private void readMeta() throws IOException {
         String l = input.readLine();
 
         if(l == null){
-            throw new IllegalArgumentException("process do not returned correct meta (name:description:author:preferedFps): "+streamFile);
+            throw new IllegalArgumentException("process do not returned correct preferedFps: "+streamFile);
         }
 
-        String[] line = l.split(":");
-        if(line.length != 4){
-            throw new IllegalArgumentException("process do not returned correct meta (name:description:author:preferedFps): "+streamFile);
-        }
-        if(!line[3].matches("\\d{1,4}")){
-            throw new IllegalArgumentException("preferedFps in meta out of range [0-9999] (name:description:author:preferedFps): "+streamFile);
+        if(!l.matches("\\d{1,4}")){
+            throw new IllegalArgumentException("preferedFps out of range [0-9999]: "+streamFile);
         }
 
-        name = line[0];
-        description = line[1];
-        author = line[2];
-        preferedFPS = Integer.parseInt(line[3]);
+        preferedFPS = Integer.parseInt(l);
 
     }
 
@@ -134,13 +129,28 @@ public class EffectWrapperStream implements Effect {
 
     @Override
     public void init(int nleds, String args) {
+
+        try {
+
+            process = Runtime.getRuntime().exec(command);
+
+            input = new BufferedReader(new InputStreamReader(process.getInputStream(), UTF_8));
+            output = new OutputStreamWriter(process.getOutputStream(), UTF_8);
+
+            testForVersion();
+            readMeta();
+        } catch (Exception e) {
+            System.err.println("cant start extern process "+streamFile+": "+e.getMessage());
+            isClosed = true;
+        }
+
         if(isClosed){
             return;
         }
 
         try {
 
-            output.write("init:"+nleds+":"+args+"\r\n");
+            send("init:"+nleds+":"+args+"\r\n");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -157,11 +167,11 @@ public class EffectWrapperStream implements Effect {
 
         try {
 
-            output.write("update:" + time + ":" + step + "\r\n");
+            send("update:" + time + ":" + step + "\r\n");
             String in[] = input.readLine().split(",");
 
-            if(in.length != data.length){
-                System.err.println("the extern process returned an array with wrong length, it should be "+data.length+": "+streamFile);
+            if(in.length < data.length){
+                System.err.println("the extern process returned an array with wrong length, it should be >="+data.length+": "+streamFile);
             }
 
             for(int i = 0; i < data.length; ++i){
@@ -181,8 +191,36 @@ public class EffectWrapperStream implements Effect {
         }
 
     }
+
+    @Override
+    public void kill() {
+
+        if(process  != null){
+            try {
+
+                send("quit");
+                boolean isEnded = process.waitFor(5, TimeUnit.SECONDS);
+                if(!isEnded){
+                    process.destroyForcibly();
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+        }
+
+    }
+
     @Override
     public String toString(){
         return "effect{name="+getName()+", author="+getAuthor()+", description="+getDescription()+", fps="+getPreferedFPS()+", class="+this.getClass().getName()+"}";
+    }
+
+    synchronized private void send(String s) throws IOException {
+        output.write(s);
+        output.flush();
     }
 }

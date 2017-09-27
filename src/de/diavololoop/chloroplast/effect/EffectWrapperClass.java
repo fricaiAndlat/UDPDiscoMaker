@@ -43,6 +43,8 @@ public class EffectWrapperClass implements Effect{
                 Object result = m.invoke(instance);
                 if(result instanceof Integer){
                     preferedFPS = (int)result;
+                }else{
+                    System.err.println("Effect getPreferedFPS not return int: "+cls.getName());
                 }
             }else if(m.getName().equals("init")){
                 Class<?>[] types = m.getParameterTypes();
@@ -61,6 +63,8 @@ public class EffectWrapperClass implements Effect{
             }
 
         }
+
+        System.out.println(this);
     }
 
     @Override
@@ -103,6 +107,10 @@ public class EffectWrapperClass implements Effect{
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void kill() {
     }
 
     @Override

@@ -5,19 +5,19 @@
 public class Test{
 
     public String getName() {
-        return "Basic Color";
+        return "Basic";
     }
 
     public String getAuthor() {
-        return "Chloroplast";
+        return "Test";
     }
 
     public String getDescription() {
-        return "Simply displays a single color.";
+        return "Test";
     }
 
     public int getPreferedFPS() {
-        return 0;
+        return 1;
     }
 
     public void init(int nleds, String args) {
@@ -27,7 +27,7 @@ public class Test{
     public void update(long time, int step, byte[] data) {
 
         for(int i = 0; i < data.length; ++i){
-            data[i] = 20;
+            data[i] = (byte)((step*4) % 255);
         }
 
     }

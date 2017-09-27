@@ -1,4 +1,4 @@
-package de.diavololoop.chloroplast;
+package de.diavololoop.chloroplast.io;
 
 import java.net.*;
 

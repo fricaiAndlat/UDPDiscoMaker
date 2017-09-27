@@ -1,24 +1,36 @@
 package de.diavololoop.chloroplast;
 
 import de.diavololoop.chloroplast.effect.Effect;
+import de.diavololoop.chloroplast.io.CommandLineInterface;
 import de.diavololoop.chloroplast.io.EffectLoader;
+import de.diavololoop.chloroplast.io.Sender;
+import de.diavololoop.chloroplast.io.WebInterface;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by gast2 on 26.09.17.
  */
 public class DiscoMaker {
-//135
-    Sender sender = new Sender();
-    EffectLoader effectLoader;
 
-    public DiscoMaker(){
+    private Sender sender = new Sender();
+    private EffectLoader effectLoader;
+    private Effect currentEffect;
+    private EffectPlayer player;
 
-        File root = new File("./");
+    int nleds = 135;
+
+    public DiscoMaker(File root){
+
 
         effectLoader = new EffectLoader(root);
         effectLoader.loadEffects();
+
+        currentEffect = effectLoader.allEffects().get("SimpleColor");
+        currentEffect.init(nleds, "black");
+
+        player = new EffectPlayer(sender, currentEffect, nleds);
 
     }
 
@@ -26,13 +38,35 @@ public class DiscoMaker {
         return effectLoader;
     }
 
-    public void setEffect(String name, String args){
-
+    public void setEffect(Effect effect, String args){
+        if(currentEffect != null){
+            currentEffect.kill();
+        }
+        effect.init(nleds, args);
+        currentEffect = effect;
+        player.play(effect);
     }
+
     public Effect getEffect(){
-        return null;
+        return currentEffect;
     }
 
+    public void exit() {
+        currentEffect = effectLoader.allEffects().get("SimpleColor");
+        currentEffect.init(nleds, "black");
+        player.play(currentEffect);
+
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+        }
+
+        player.stop();
+        if(currentEffect != null){
+            currentEffect.kill();
+        }
+        System.exit(0);
+    }
 
     public static void main(String[] args){
 
@@ -42,7 +76,7 @@ public class DiscoMaker {
             if(args[i].equalsIgnoreCase("-h") || args[i].equalsIgnoreCase("--help")){
                 printUsage();
                 return;
-            }else if(args[i].equalsIgnoreCase("-w")){
+            } else if(args[i].equalsIgnoreCase("-w")){
 
                 if(args.length > i+1){
                     if(args[i+1].matches("\\d{1,5}")){
@@ -52,7 +86,7 @@ public class DiscoMaker {
                         System.out.println("port our of range");
                         return;
                     }
-                }else{
+                } else {
                     printUsage();
                     return;
                 }
@@ -63,12 +97,15 @@ public class DiscoMaker {
             }
         }
 
+        File root = new File("./");
+        DiscoMaker discoMaker = new DiscoMaker(root);
+        CommandLineInterface cmdInterface = new CommandLineInterface(discoMaker);
 
-        new DiscoMaker();
-    }
-    public void exit() {
-
-
+        try {
+            WebInterface webInterface = new WebInterface(root, discoMaker);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void printUsage(){

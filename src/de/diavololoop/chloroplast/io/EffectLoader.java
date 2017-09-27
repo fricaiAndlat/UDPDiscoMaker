@@ -1,6 +1,7 @@
 package de.diavololoop.chloroplast.io;
 
 import de.diavololoop.chloroplast.effect.Effect;
+import de.diavololoop.chloroplast.effect.EffectBasicColor;
 import de.diavololoop.chloroplast.effect.EffectWrapperClass;
 import de.diavololoop.chloroplast.effect.EffectWrapperStream;
 
@@ -49,10 +50,12 @@ public class EffectLoader {
         indexEffects(effectDir, files);
 
         files.stream().filter(file -> file.getName().endsWith(".java")).forEach(this::compileEffect);
-        files.stream().filter(file -> file.getName().endsWith(".class")).forEach(this::loadCompiledEffect);
         files.stream().filter(file -> file.getName().endsWith(".stream")).forEach(this::loadStreamedEffect);
+        files.stream().filter(file -> file.getName().endsWith(".class")).forEach(this::loadCompiledEffect);
 
-        effects.values().forEach(System.out::println);
+        Effect basicColor = new EffectBasicColor();
+
+        effects.put(basicColor.getName(), basicColor);
 
 
 
@@ -89,6 +92,8 @@ public class EffectLoader {
             Process p = Runtime.getRuntime().exec("javac "+file.getAbsolutePath());
             p.waitFor();
             int exitCode = p.exitValue();
+
+
             if(exitCode != 0){
                 System.err.println("error while compiling effect: "+file.getName());
             }
@@ -110,10 +115,11 @@ public class EffectLoader {
             Class<?> cls = Class.forName(className, true, classLoader);
 
             if(Effect.class.isAssignableFrom(cls)){
-                effects.put(className, cls.newInstance());
+                Effect e = (Effect)cls.newInstance();
+                effects.put(e.getName(), e);
             }else{
                 EffectWrapperClass effect = new EffectWrapperClass(cls);
-                effects.put(className, effect);
+                effects.put(effect.getName(), effect);
             }
 
 
