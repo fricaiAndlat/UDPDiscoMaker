@@ -1,5 +1,6 @@
 package de.diavololoop.chloroplast;
 
+import de.diavololoop.chloroplast.color.ColorModel;
 import de.diavololoop.chloroplast.effect.Effect;
 import de.diavololoop.chloroplast.io.Sender;
 
@@ -65,10 +66,10 @@ public class EffectPlayer {
                 timeLast = time;
                 timeSinceStart += dt;
 
-                current.update(timeSinceStart, counter++, data);
+                ColorModel model = current.update(timeSinceStart, counter++, data);
 
-                if(!Arrays.equals(data, dataLast) || true){
-                    sender.send(data);
+                if(!Arrays.equals(data, dataLast)){
+                    sender.send(data, model);
                 }
 
                 System.arraycopy(data, 0, dataLast, 0, data.length);
@@ -77,10 +78,11 @@ public class EffectPlayer {
                     //block until interupt
                     while(!playThread.isInterrupted()){
                         try {
-                            Thread.sleep(Long.MAX_VALUE);
+                            Thread.sleep(2 * 60 * 1000);
                         } catch (InterruptedException e) {
                             playThread.interrupt();
                         }
+                        sender.send(data, model);
                     }
                 }else{
                     long timeToWait = ddt - dt;

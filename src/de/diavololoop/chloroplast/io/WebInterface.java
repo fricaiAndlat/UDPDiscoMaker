@@ -6,8 +6,13 @@ import de.diavololoop.chloroplast.effect.Effect;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by gast2 on 27.09.17.
@@ -28,10 +33,64 @@ public class WebInterface {
         this.discoMaker = discoMaker;
 
         makeDirectory(root);
+        readInterface();
+
         server = new ServerSocket(8080);
         Thread accepter = new Thread(this::runAccept);
         accepter.start();
 
+    }
+
+    private void readInterface() throws IOException {
+
+        File htmlFile = new File(interfaceDir, "WebInterface.html");
+
+        if(!htmlFile.isFile()){
+            htmlFile.createNewFile();
+            InputStream input = this.getClass().getResourceAsStream("WebInterface.html");
+            OutputStream output = new FileOutputStream(htmlFile);
+
+            byte[] buffer = new byte[1024];
+            int len;
+            while(-1 != (len = input.read(buffer))){
+                output.write(buffer, 0, len);
+            }
+
+            input.close();
+            output.flush();
+            output.close();
+        }
+
+        site = new String(Files.readAllBytes(htmlFile.toPath()), StandardCharsets.UTF_8);
+        siteLen = site.getBytes(StandardCharsets.UTF_8).length;
+
+        List<File> loadedFiles = Arrays.asList(interfaceDir.listFiles());
+
+        site = site.replaceAll("<load-quickmenu/>", loadAllFilesEndWith(loadedFiles, ".quick.html"));
+        site = site.replaceAll("<load-menu/>", loadAllFilesEndWith(loadedFiles, ".menu.html"));
+        site = site.replaceAll("<load-script/>", loadAllFilesEndWith(loadedFiles, ".js"));
+        site = site.replaceAll("<load-css/>", loadAllFilesEndWith(loadedFiles, ".css"));
+
+
+
+    }
+
+    private String loadAllFilesEndWith(List<File> loadedFiles, String end){
+
+        return loadedFiles
+                .stream()
+                .filter(file -> file.getName().endsWith(end))
+                .map(file -> {
+                    try {
+                        return Files.readAllBytes(file.toPath());
+                    } catch (IOException e) {
+                        return null;
+                    }
+                })
+                .filter(bytes -> bytes!=null)
+                .map(bytes -> new String(bytes, StandardCharsets.UTF_8))
+                .collect(Collectors.joining("\n"));
+                //.replaceAll("\"", "'");
     }
 
     private void runAccept() {
@@ -39,6 +98,7 @@ public class WebInterface {
         while(!Thread.currentThread().isInterrupted()) {
 
             try {
+                connections.removeIf(con -> con.isDead);
                 connections.add(new Connection(server.accept()));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -62,7 +122,7 @@ public class WebInterface {
         }
     }
 
-    /*synchronized*/ private void requestEffect(String effectName, String args){
+    synchronized private void requestEffect(String effectName, String args){
         Effect effect = discoMaker.getEffectLoader().allEffects().get(effectName);
 
         if(effect == null){
@@ -76,7 +136,7 @@ public class WebInterface {
     private void request(BufferedReader input, Writer output) throws IOException {
         String line = input.readLine();
         if(line == null){
-            return;//throw new IOException("error reading data");
+            throw new IOException("error reading data");
         }
         String[] head = line.split(" ");
         if(head.length < 2){

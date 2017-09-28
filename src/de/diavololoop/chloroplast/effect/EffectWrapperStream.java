@@ -1,12 +1,17 @@
 package de.diavololoop.chloroplast.effect;
 
+import de.diavololoop.chloroplast.color.ColorModel;
+import de.diavololoop.chloroplast.util.SpacePosition;
+
 import java.io.*;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class EffectWrapperStream implements Effect {
+public class EffectWrapperStream extends Effect {
 
     public final static int VERSION = 1;
 
@@ -128,7 +133,7 @@ public class EffectWrapperStream implements Effect {
     }
 
     @Override
-    public void init(int nleds, String args) {
+    public void init(int nleds, String args, List<SpacePosition> positions) {
 
         try {
 
@@ -151,6 +156,7 @@ public class EffectWrapperStream implements Effect {
         try {
 
             send("init:"+nleds+":"+args+"\r\n");
+            send("positions:"+positions.stream().map(pos -> pos.toString()).collect(Collectors.joining(":")));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -159,10 +165,10 @@ public class EffectWrapperStream implements Effect {
     }
 
     @Override
-    public void update(long time, int step, byte[] data) {
+    public ColorModel update(long time, int step, byte[] data) {
 
         if(isClosed){
-            return;
+            return null;
         }
 
         try {
@@ -172,6 +178,15 @@ public class EffectWrapperStream implements Effect {
 
             if(in.length < data.length){
                 System.err.println("the extern process returned an array with wrong length, it should be >="+data.length+": "+streamFile);
+            }
+            int dataOffset = 0;
+            if(!in[0].matches(" *\\d{1,10} *")){
+                dataOffset = 1;
+            }
+            ColorModel model = ColorModel.getModel(in[0]);
+
+            if(model == null){
+                System.err.println("color model " + in[0] + "is not known: "+streamFile);
             }
 
             for(int i = 0; i < data.length; ++i){
@@ -184,12 +199,15 @@ public class EffectWrapperStream implements Effect {
 
             }
 
+            return model;
+
 
         } catch (IOException e) {
             e.printStackTrace();
             isClosed = true;
         }
 
+        return null;
     }
 
     @Override

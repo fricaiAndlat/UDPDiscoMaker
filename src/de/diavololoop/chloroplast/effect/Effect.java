@@ -1,18 +1,30 @@
 package de.diavololoop.chloroplast.effect;
 
+import de.diavololoop.chloroplast.color.ColorModel;
+import de.diavololoop.chloroplast.util.SpacePosition;
+import javafx.scene.paint.Color;
+
+import java.util.List;
+
 /**
  * Created by gast2 on 26.09.17.
  */
-public interface Effect {
+public abstract class Effect {
 
-    public String getName();
-    public String getAuthor();
-    public String getDescription();
+    public abstract String getName();
+    public abstract String getAuthor();
+    public abstract String getDescription();
 
-    public int getPreferedFPS();
+    public int getPreferedFPS(){
+        return 1;
+    }
 
-    public void init(int nleds, String args);
-    public void update(long time, int step, byte[] data);
-    public void kill();
+    public abstract ColorModel update(long time, int step, byte[] data);
+
+    public void init(int nleds, String args, List<SpacePosition> positions){
+    }
+
+    public void kill(){
+    }
 
 }

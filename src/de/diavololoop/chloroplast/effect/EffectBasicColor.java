@@ -1,11 +1,15 @@
 package de.diavololoop.chloroplast.effect;
 
+import de.diavololoop.chloroplast.color.ColorModel;
+import de.diavololoop.chloroplast.util.SpacePosition;
 import javafx.scene.paint.Color;
+
+import java.util.List;
 
 /**
  * Created by gast2 on 26.09.17.
  */
-public class EffectBasicColor implements Effect {
+public class EffectBasicColor extends Effect {
 
     byte r, g, b;
 
@@ -30,7 +34,7 @@ public class EffectBasicColor implements Effect {
     }
 
     @Override
-    public void init(int nleds, String args) {
+    public void init(int nleds, String args, List<SpacePosition> positions) {
         try{
 
             Color color = Color.valueOf(args);
@@ -46,7 +50,7 @@ public class EffectBasicColor implements Effect {
     }
 
     @Override
-    public void update(long time, int step, byte[] data) {
+    public ColorModel update(long time, int step, byte[] data) {
 
         for(int i = 0; i < data.length; ++i){
             if(i%3 == 0){
@@ -58,6 +62,7 @@ public class EffectBasicColor implements Effect {
             }
         }
 
+        return ColorModel.RGB_MODEL;
     }
 
     @Override

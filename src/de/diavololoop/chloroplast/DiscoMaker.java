@@ -14,15 +14,16 @@ import java.io.IOException;
  */
 public class DiscoMaker {
 
-    private Sender sender = new Sender();
+    private Sender sender;
     private EffectLoader effectLoader;
     private Effect currentEffect;
     private EffectPlayer player;
 
     int nleds = 135;
 
-    public DiscoMaker(File root){
+    public DiscoMaker(File root, StripeConfiguration configuration) throws IOException {
 
+        sender = new Sender(configuration);
 
         effectLoader = new EffectLoader(root);
         effectLoader.loadEffects();
@@ -68,21 +69,22 @@ public class DiscoMaker {
         System.exit(0);
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
         int port = -1;
+        File configFile = null;
 
-        for(int i = 0; i < args.length; ++i){
-            if(args[i].equalsIgnoreCase("-h") || args[i].equalsIgnoreCase("--help")){
+        for (int i = 0; i < args.length; ++i) {
+            if (args[i].equalsIgnoreCase("-h") || args[i].equalsIgnoreCase("--help")) {
                 printUsage();
                 return;
-            } else if(args[i].equalsIgnoreCase("-w")){
+            } else if (args[i].equalsIgnoreCase("-w")) {
 
-                if(args.length > i+1){
-                    if(args[i+1].matches("\\d{1,5}")){
-                        port = Integer.parseInt(args[i+1]);
+                if (args.length > i + 1) {
+                    if (args[i + 1].matches("\\d{1,5}")) {
+                        port = Integer.parseInt(args[i + 1]);
                         ++i;
-                    }else{
+                    } else {
                         System.out.println("port our of range");
                         return;
                     }
@@ -91,27 +93,51 @@ public class DiscoMaker {
                     return;
                 }
 
-            }else{
+            } else if (args[i].equalsIgnoreCase("-c")) {
+
+                if (args.length > i + 1) {
+
+                    configFile = new File(args[i + 1]);
+                    ++i;
+
+                } else {
+                    printUsage();
+                    return;
+                }
+
+            } else {
                 printUsage();
                 return;
             }
         }
 
-        File root = new File("./");
-        DiscoMaker discoMaker = new DiscoMaker(root);
-        CommandLineInterface cmdInterface = new CommandLineInterface(discoMaker);
-
-        try {
-            WebInterface webInterface = new WebInterface(root, discoMaker);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (configFile == null) {
+            System.out.println("cant start without a led-configuration file");
+            System.out.println("use the -c <file> parameter");
+            return;
         }
+        try{
+            StripeConfiguration configuration = new StripeConfiguration(configFile);
+
+            File root = new File("./");
+            DiscoMaker discoMaker = new DiscoMaker(root, configuration);
+            CommandLineInterface cmdInterface = new CommandLineInterface(discoMaker);
+
+            if (port != -1) {
+                WebInterface webInterface = new WebInterface(root, discoMaker);
+            }
+
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+
     }
 
     public static void printUsage(){
         System.out.println("usage <args>");
-        System.out.println("\t-h       \tprints this help");
-        System.out.println("\t-w <port>\tstarts a webinterface on given port");
+        System.out.println("\t[-h]       \tprints this help");
+        System.out.println("\t[-w] <port>\tstarts a webinterface on given port");
+        System.out.println("\t -c  <file>\tthe led-configuration file");
     }
 
 

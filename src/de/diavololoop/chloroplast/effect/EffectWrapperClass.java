@@ -1,12 +1,16 @@
 package de.diavololoop.chloroplast.effect;
 
+import de.diavololoop.chloroplast.color.ColorModel;
+import de.diavololoop.chloroplast.util.SpacePosition;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Created by gast2 on 26.09.17.
  */
-public class EffectWrapperClass implements Effect{
+public class EffectWrapperClass extends Effect{
 
     private String name;
     private String author;
@@ -48,12 +52,15 @@ public class EffectWrapperClass implements Effect{
                 }
             }else if(m.getName().equals("init")){
                 Class<?>[] types = m.getParameterTypes();
-                if(types.length == 2 && types[0] == int.class && types[1] == String.class){
+                if(types.length == 3 && types[0] == int.class && types[1] == String.class && types[2] == List.class){
                     initMethod = m;
                 }else{
                     throw new IllegalArgumentException("init method must match init(int nleds, String args)");
                 }
             }else if(m.getName().equals("update")){
+                if(!String.class.isAssignableFrom(m.getReturnType())){
+                    throw new IllegalArgumentException("update method must return (long time, int step, byte[] data)");
+                }
                 Class<?>[] types = m.getParameterTypes();
                 if(types.length == 3 && types[0] == long.class && types[1] == int.class && types[2].isArray() && types[2].getComponentType() == byte.class){
                     updateMethod = m;
@@ -88,9 +95,9 @@ public class EffectWrapperClass implements Effect{
     }
 
     @Override
-    public void init(int nleds, String args) {
+    public void init(int nleds, String args, List<SpacePosition> positions) {
         try {
-            initMethod.invoke(instance, nleds, args);
+            initMethod.invoke(instance, nleds, args, positions);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -99,14 +106,15 @@ public class EffectWrapperClass implements Effect{
     }
 
     @Override
-    public void update(long time, int step, byte[] data) {
+    public ColorModel update(long time, int step, byte[] data) {
         try {
-            updateMethod.invoke(instance, time, step, data);
+            return (ColorModel)updateMethod.invoke(instance, time, step, data);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     @Override

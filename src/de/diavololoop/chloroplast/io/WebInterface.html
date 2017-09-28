@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <title>AmbiLight Interface</title>
+        <load-script/>
+        <style>
+            .quickmenu-element {
+                width: 100px;
+                height: 100px;
+                display: inline-block;
+                margin: 20px;
+                border: 1px solid black;
+                text-align: center;
+                text-decoration: none;
+                color: black;
+                font-size: 1.5em;
+            }
+            .spacer {
+                height: 10px;
+                background-color: #aaaaaa;
+                width: 100%;
+            }
+        </style>
+        <load-css/>
+    </head>
+    <body>
+        <div class="quickmenu">
+            <a href="/SimpleColor?black" class="quickmenu-element" style="background-color: white;">clear</a>
+            <div class="spacer"></div>
+            <a href="/SimpleColor?white"  class="quickmenu-element" style="background-color: white;" >white</a>
+            <a href="/SimpleColor?red"    class="quickmenu-element" style="background-color: red;"   >red</a>
+            <a href="/SimpleColor?green"  class="quickmenu-element" style="background-color: green;" >green</a>
+            <a href="/SimpleColor?blue"   class="quickmenu-element" style="background-color: blue;"  >blue</a>
+            <a href="/SimpleColor?yellow" class="quickmenu-element" style="background-color: yellow;">yellow</a>
+            <a href="/SimpleColor?orange" class="quickmenu-element" style="background-color: orange;">orange</a>
+            <a href="/SimpleColor?violet" class="quickmenu-element" style="background-color: violet;">violet</a>
+            <a href="/SimpleColor?cyan"   class="quickmenu-element" style="background-color: cyan;"  >cyan</a>
+            <div class="spacer"></div>
+            <load-quickmenu/>
+            <div class="spacer"></div>
+            <load-menu/>
+        </div>
+    </body>
+</html>

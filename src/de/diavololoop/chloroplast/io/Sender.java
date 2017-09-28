@@ -1,39 +1,63 @@
 package de.diavololoop.chloroplast.io;
 
+import de.diavololoop.chloroplast.StripeConfiguration;
+import de.diavololoop.chloroplast.color.ColorModel;
+
+import java.io.IOException;
 import java.net.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by gast2 on 26.09.17.
  */
 public class Sender {
 
-    InetAddress address;
-    DatagramSocket clientSocket;
+    private DatagramSocket clientSocket;
+    private StripeConfiguration configuration;
 
-    public Sender(){
+    private Map<StripeConfiguration.Stripe, InetAddress> addresses = new HashMap<>();
+    private Map<StripeConfiguration.Stripe, byte[]> buffers = new HashMap<>();
 
-        try {
+    public Sender(StripeConfiguration configuration) throws IOException {
 
-            address         = InetAddress.getByName("10.0.0.204");
-            clientSocket    = new DatagramSocket();
+        this.configuration = configuration;
 
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (SocketException e) {
-            e.printStackTrace();
+        for(StripeConfiguration.Stripe stripe: configuration.getStripes()){
+
+            try {
+                addresses.put(stripe, InetAddress.getByName(stripe.address));
+                buffers.put(stripe, new byte[stripe.getByteLength()]);
+            } catch (UnknownHostException e) {
+                throw new IOException("unknow host: "+stripe.address);
+            }
+
         }
+
+        clientSocket    = new DatagramSocket();
+
     }
 
-    public void send(byte[] data){
+    public void send(byte[] data, ColorModel model){
 
-        DatagramPacket sendPacket = new DatagramPacket(data, data.length, address, 1234);
-        try {
+        for(StripeConfiguration.Stripe stripe: configuration.getStripes()){
 
-            clientSocket.send(sendPacket);
+            byte[] buffer = buffers.get(stripe);
+            InetAddress address = addresses.get(stripe);
 
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
+            stripe.copyData(data, buffer, model);
+
+            DatagramPacket sendPacket = new DatagramPacket(buffer, buffer.length, address, stripe.port);
+            try {
+
+                clientSocket.send(sendPacket);
+
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
+
         }
+
 
     }
 }
