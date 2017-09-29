@@ -1,10 +1,9 @@
 package de.diavololoop.chloroplast.effect;
 
 import de.diavololoop.chloroplast.color.ColorModel;
+import de.diavololoop.chloroplast.util.ColorPicker;
 import de.diavololoop.chloroplast.util.SpacePosition;
-import javafx.scene.paint.Color;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -40,10 +39,9 @@ public class EffectRandomBlink extends Effect{
 
     @Override
     public void init(String args, List<SpacePosition> positions) {
-
-        Color colorOn = Color.rgb(80,80,0);
-        Color colorOff = Color.BLACK;
         propability = 50;
+        colorOn[0] = colorOn[1] = colorOn[2] = -1;
+        colorOff[0] = colorOff[1] = colorOff[2] = 0;
 
         String[] meta = args.split("&");
         for(String element: meta){
@@ -56,9 +54,9 @@ public class EffectRandomBlink extends Effect{
             try{
 
                 if(values[0].equalsIgnoreCase("color")){
-                    colorOn = Color.valueOf(values[1].replace("%", "#"));
+                    ColorPicker.getColor(values[1], colorOn, 0);
                 }else if(values[0].equalsIgnoreCase("back")){
-                    colorOff = Color.valueOf(values[1].replace("%", "#"));
+                    ColorPicker.getColor(values[1], colorOff, 0);
                 }else if(values[0].equalsIgnoreCase("p")){
                     propability = Integer.parseInt(values[1]);
                 }
@@ -70,17 +68,6 @@ public class EffectRandomBlink extends Effect{
 
 
         }
-
-        this.colorOn[0] = (byte)(colorOn.getRed()*255);
-        this.colorOn[1] = (byte)(colorOn.getGreen()*255);
-        this.colorOn[2] = (byte)(colorOn.getBlue()*255);
-
-        this.colorOff[0] = (byte)(colorOff.getRed()*255);
-        this.colorOff[1] = (byte)(colorOff.getGreen()*255);
-        this.colorOff[2] = (byte)(colorOff.getBlue()*255);
-
-        System.out.println("on: "+ Arrays.toString(this.colorOn));
-        System.out.println("off: "+ Arrays.toString(this.colorOff));
     }
 
     @Override

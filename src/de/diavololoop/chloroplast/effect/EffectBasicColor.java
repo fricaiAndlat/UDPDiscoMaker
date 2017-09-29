@@ -1,8 +1,9 @@
 package de.diavololoop.chloroplast.effect;
 
 import de.diavololoop.chloroplast.color.ColorModel;
+import de.diavololoop.chloroplast.util.ColorPicker;
 import de.diavololoop.chloroplast.util.SpacePosition;
-import javafx.scene.paint.Color;
+
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public class EffectBasicColor extends Effect {
 
-    byte r, g, b;
+    byte[] rgb = new byte[3];
 
     @Override
     public String getName() {
@@ -35,31 +36,14 @@ public class EffectBasicColor extends Effect {
 
     @Override
     public void init(String args, List<SpacePosition> positions) {
-        try{
-
-            Color color = Color.valueOf(args);
-            r = (byte)(color.getRed()*255);
-            g = (byte)(color.getGreen()*255);
-            b = (byte)(color.getBlue()*255);
-
-        } catch(Exception e){
-            r = 0;
-            g = 0;
-            b = 0;
-        }
+        ColorPicker.getColor(args, rgb, 0);
     }
 
     @Override
     public ColorModel update(long time, int step, byte[] data) {
 
         for(int i = 0; i < data.length; ++i){
-            if(i%3 == 0){
-                data[i] = r;
-            }else if(i%3 == 1){
-                data[i] = g;
-            }else if(i%3 == 2){
-                data[i] = b;
-            }
+            data[i] = rgb[i%3];
         }
 
         return ColorModel.RGB_MODEL;

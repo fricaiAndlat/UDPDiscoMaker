@@ -84,7 +84,7 @@ public class EffectPlayer {
                         }
                         sender.send(data, model);
                     }
-                }else{
+                } else {
                     long timeToWait = ddt - dt;
 
                     if(timeToWait > 0){
@@ -94,7 +94,7 @@ public class EffectPlayer {
                             playThread.interrupt();
                         }
                     }else{
-                        System.err.println("cant keep up or effect is not quick enough");
+                        //System.err.println("cant keep up or effect is not quick enough");
                     }
                 }
 

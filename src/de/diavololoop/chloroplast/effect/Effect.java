@@ -2,7 +2,6 @@ package de.diavololoop.chloroplast.effect;
 
 import de.diavololoop.chloroplast.color.ColorModel;
 import de.diavololoop.chloroplast.util.SpacePosition;
-import javafx.scene.paint.Color;
 
 import java.util.List;
 
