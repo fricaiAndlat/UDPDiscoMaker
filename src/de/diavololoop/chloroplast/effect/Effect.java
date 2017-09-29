@@ -21,7 +21,7 @@ public abstract class Effect {
 
     public abstract ColorModel update(long time, int step, byte[] data);
 
-    public void init(int nleds, String args, List<SpacePosition> positions){
+    public void init(String args, List<SpacePosition> positions){
     }
 
     public void kill(){

@@ -1,9 +1,6 @@
 package de.diavololoop.chloroplast.io;
 
-import de.diavololoop.chloroplast.effect.Effect;
-import de.diavololoop.chloroplast.effect.EffectBasicColor;
-import de.diavololoop.chloroplast.effect.EffectWrapperClass;
-import de.diavololoop.chloroplast.effect.EffectWrapperStream;
+import de.diavololoop.chloroplast.effect.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,8 +51,12 @@ public class EffectLoader {
         files.stream().filter(file -> file.getName().endsWith(".class")).forEach(this::loadCompiledEffect);
 
         Effect basicColor = new EffectBasicColor();
+        Effect rainbow = new EffectRainbow();
+        Effect blinker = new EffectRandomBlink();
 
         effects.put(basicColor.getName(), basicColor);
+        effects.put(rainbow.getName(), rainbow);
+        effects.put(blinker.getName(), blinker);
 
 
 

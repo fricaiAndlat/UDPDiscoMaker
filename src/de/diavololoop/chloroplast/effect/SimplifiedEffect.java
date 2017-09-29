@@ -23,7 +23,7 @@ public abstract class SimplifiedEffect extends Effect{
     }
 
     @Override
-    public void init(int nleds, String args, List<SpacePosition> positions) {
+    public void init(String args, List<SpacePosition> positions) {
         this.positions = positions;
         init(args);
     }

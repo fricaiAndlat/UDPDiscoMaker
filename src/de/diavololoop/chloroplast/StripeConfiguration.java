@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -16,9 +17,15 @@ import java.util.List;
 public class StripeConfiguration {
 
     private List<Stripe> stripeList = new ArrayList<Stripe>();
+    private List<SpacePosition> positions;
 
-    public StripeConfiguration(File file) throws IOException {
-        String configuration = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+    public StripeConfiguration(File file, boolean redirectAdressToLocalhost) throws IOException {
+        String configuration = null;
+        try {
+            configuration = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new IOException("cant read File "+file.getAbsolutePath());
+        }
         configuration = configuration.replaceAll("\r", "\n");
         configuration = configuration.replaceAll("/\\*.*?\\*/", "");
         configuration = configuration.replaceAll(" ", "");
@@ -35,18 +42,16 @@ public class StripeConfiguration {
             if(meta.length != 3){
                 throw new IOException("stripe must start with \"address:port:colormodel\":"+stripe);
             }
-            String address = meta[0];
+            String address = redirectAdressToLocalhost ? "localhost" : meta[0];
             int port;
             try{
                 port = Integer.parseInt(meta[1]);
             }catch(NumberFormatException e){
                 throw new IOException("cant read port:"+meta[1]);
             }
-            ColorModel.ByteOrder byteOrder;
-            try{
-                byteOrder = ColorModel.ByteOrder.valueOf(meta[2]);
-            }catch(IllegalArgumentException e){
-                throw new IOException("ByteOrder not implemented:"+meta[1]);
+            ColorModel.ByteOrder byteOrder = ColorModel.ByteOrder.get(meta[2]);
+            if(byteOrder == null){
+                throw new IOException("ByteOrder not implemented: "+meta[2]);
             }
 
             Stripe result = new Stripe(address, port, byteOrder);
@@ -79,12 +84,16 @@ public class StripeConfiguration {
 
     public List<SpacePosition> getPositions(){
 
-        ArrayList<SpacePosition> result = new ArrayList<>();
-        for(Stripe stripe: stripeList){
-            result.addAll(stripe.getPositions());
+        if(positions == null) {
+
+            positions = new ArrayList<>();
+            for (Stripe stripe : stripeList) {
+                positions.addAll(stripe.getPositions());
+            }
+
         }
 
-        return result;
+        return positions;
 
     }
 
@@ -99,7 +108,7 @@ public class StripeConfiguration {
         public final int port;
         public final String address;
         public final ColorModel.ByteOrder byteOrder;
-        private List<SpacePosition> positions;
+        private List<SpacePosition> positions = new ArrayList<>();
         private int offset;
 
         public Stripe(String address, int port, ColorModel.ByteOrder byteOrder){

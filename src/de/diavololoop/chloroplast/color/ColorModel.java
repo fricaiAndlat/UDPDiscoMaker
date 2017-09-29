@@ -18,6 +18,7 @@ public abstract class ColorModel {
         HSV("hsv"),
         RGBW("rgbw");
 
+
         private final String name;
         private final int byteLen;
 
@@ -35,6 +36,14 @@ public abstract class ColorModel {
             return name;
         }
 
+        public static ByteOrder get(String s) {
+
+            try {
+                return ByteOrder.valueOf(s);
+            } catch (IllegalArgumentException e){
+                return ByteOrder.RGB;
+            }
+        }
     }
 
     public static ColorModel RGB_MODEL = new ColorModelRGB();
@@ -59,7 +68,7 @@ public abstract class ColorModel {
     public void convert(byte[] in, int offsetIn, byte[] out, int offsetOut, int length, ByteOrder target){
 
         if(target == getByteOrder()){
-            System.arraycopy(in, offsetIn, out, offsetOut, length);
+            System.arraycopy(in, offsetIn, out, offsetOut, length * target.byteLen);
             return;
         }
         for(int i = 0; i < length; ++i){

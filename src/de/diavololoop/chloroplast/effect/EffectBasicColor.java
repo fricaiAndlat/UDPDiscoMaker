@@ -34,7 +34,7 @@ public class EffectBasicColor extends Effect {
     }
 
     @Override
-    public void init(int nleds, String args, List<SpacePosition> positions) {
+    public void init(String args, List<SpacePosition> positions) {
         try{
 
             Color color = Color.valueOf(args);
@@ -54,9 +54,9 @@ public class EffectBasicColor extends Effect {
 
         for(int i = 0; i < data.length; ++i){
             if(i%3 == 0){
-                data[i] = g;
-            }else if(i%3 == 1){
                 data[i] = r;
+            }else if(i%3 == 1){
+                data[i] = g;
             }else if(i%3 == 2){
                 data[i] = b;
             }

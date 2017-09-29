@@ -1,7 +1,6 @@
 
-/**
- * Created by gast2 on 26.09.17.
- */
+import java.util.List;
+
 public class Test{
 
     public String getName() {
@@ -20,15 +19,16 @@ public class Test{
         return 1;
     }
 
-    public void init(int nleds, String args) {
+    public void init(String args, List<float[]> positions) {
 
     }
 
-    public void update(long time, int step, byte[] data) {
+    public String update(long time, int step, byte[] data) {
 
         for(int i = 0; i < data.length; ++i){
             data[i] = (byte)((step*4) % 255);
         }
+        return "rgb";
 
     }
 }

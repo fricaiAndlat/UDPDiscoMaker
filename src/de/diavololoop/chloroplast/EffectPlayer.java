@@ -93,6 +93,8 @@ public class EffectPlayer {
                         } catch (InterruptedException e) {
                             playThread.interrupt();
                         }
+                    }else{
+                        System.err.println("cant keep up or effect is not quick enough");
                     }
                 }
 

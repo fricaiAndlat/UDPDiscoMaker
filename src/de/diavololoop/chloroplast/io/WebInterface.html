@@ -1,11 +1,11 @@
 <html>
-    <head>
-        <title>AmbiLight Interface</title>
-        <load-script/>
-        <style>
+<head>
+    <title>AmbiLight Interface</title>
+    <load-script/>
+    <style>
             .quickmenu-element {
-                width: 100px;
-                height: 100px;
+                width: 120px;
+                height: 120px;
                 display: inline-block;
                 margin: 20px;
                 border: 1px solid black;
@@ -14,30 +14,82 @@
                 color: black;
                 font-size: 1.5em;
             }
-            .spacer {
+            .menu-element {
+                height: 100px;
+                min-width: 100%;
+                font-size: 1.3em;
+                margin: 20px;
+                border: 1px solid black;
+                display: inline-block;
+                padding-top: 5;
+                padding-left: 10px;
+                padding-right: 10px;
+                padding-bottom: 20px;
+            }
+            .menu>h3 {
                 height: 10px;
                 background-color: #aaaaaa;
                 width: 100%;
             }
+            .menu .formtext {
+                display: inline-block;
+                font-size: 1em;
+            }
+            .spacer {
+                width: 100%;
+                height: 20px;
+                background-color: #aaaaaa;
+            }
         </style>
-        <load-css/>
-    </head>
-    <body>
-        <div class="quickmenu">
-            <a href="/SimpleColor?black" class="quickmenu-element" style="background-color: white;">clear</a>
-            <div class="spacer"></div>
-            <a href="/SimpleColor?white"  class="quickmenu-element" style="background-color: white;" >white</a>
-            <a href="/SimpleColor?red"    class="quickmenu-element" style="background-color: red;"   >red</a>
-            <a href="/SimpleColor?green"  class="quickmenu-element" style="background-color: green;" >green</a>
-            <a href="/SimpleColor?blue"   class="quickmenu-element" style="background-color: blue;"  >blue</a>
-            <a href="/SimpleColor?yellow" class="quickmenu-element" style="background-color: yellow;">yellow</a>
-            <a href="/SimpleColor?orange" class="quickmenu-element" style="background-color: orange;">orange</a>
-            <a href="/SimpleColor?violet" class="quickmenu-element" style="background-color: violet;">violet</a>
-            <a href="/SimpleColor?cyan"   class="quickmenu-element" style="background-color: cyan;"  >cyan</a>
-            <div class="spacer"></div>
-            <load-quickmenu/>
-            <div class="spacer"></div>
-            <load-menu/>
-        </div>
-    </body>
+    <load-css/>
+</head>
+<body>
+<div class="quickmenu">
+    <a href="/SimpleColor?black" class="quickmenu-element" style="background-color: white;">clear</a>
+    <div class="spacer"></div>
+    <a href="/SimpleColor?white"  class="quickmenu-element" style="background-color: white;" >white</a>
+    <a href="/SimpleColor?red"    class="quickmenu-element" style="background-color: red;"   >red</a>
+    <a href="/SimpleColor?green"  class="quickmenu-element" style="background-color: green;" >green</a>
+    <a href="/SimpleColor?blue"   class="quickmenu-element" style="background-color: blue;"  >blue</a>
+    <a href="/SimpleColor?yellow" class="quickmenu-element" style="background-color: yellow;">yellow</a>
+    <a href="/SimpleColor?orange" class="quickmenu-element" style="background-color: orange;">orange</a>
+    <a href="/SimpleColor?violet" class="quickmenu-element" style="background-color: violet;">violet</a>
+    <a href="/SimpleColor?cyan"   class="quickmenu-element" style="background-color: cyan;"  >cyan</a>
+    <div class="spacer"></div>
+    <a href="/Rainbow?speed=1&light=1&saturation=1&freq=16" class="quickmenu-element" >Rainbow</a>
+    <a href="/Rainbow?speed=0&light=1&saturation=1&frq=16" class="quickmenu-element" ><div>Rainbow<br />(still)</div></a>
+    <a href="/RandomBlink" class="quickmenu-element" >RBlink</a>
+    <div class="spacer"></div>
+    <load-quickmenu/>
+</div>
+<div class="menu">
+    <load-menu/>
+    <div class="menu-element">
+        <h3>Rainbow</h3>
+        <form action="/Rainbow" method="GET">
+            <div class="formtext">Speed </div>
+            <input type="number" name="speed" value="1" step="0.01" />
+            <div class="formtext">Light </div>
+            <input type="number" name="light" value="1" step="0.01" />
+            <div class="formtext">Saturation </div>
+            <input type="number" name="saturation" value="1" step="0.01" />
+            <div class="formtext">Frequency </div>
+            <input type="number" name="freq" value="16" />
+            <input type="submit" value="Send" />
+        </form>
+    </div>
+    <div class="menu-element">
+        <h3>Rainbow</h3>
+        <form action="/RandomBlink" method="GET">
+            <div class="formtext">propability </div>
+            <input type="number" name="p" value="128" />
+            <div class="formtext">Light On</div>
+            <input type="text" name="color" value="yellow"/>
+            <div class="formtext">Light Off</div>
+            <input type="text" name="back" value="yellow"/>
+            <input type="submit" value="Send" />
+        </form>
+    </div>
+</div>
+</body>
 </html>

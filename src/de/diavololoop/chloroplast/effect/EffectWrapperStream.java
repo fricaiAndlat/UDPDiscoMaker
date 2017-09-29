@@ -133,7 +133,7 @@ public class EffectWrapperStream extends Effect {
     }
 
     @Override
-    public void init(int nleds, String args, List<SpacePosition> positions) {
+    public void init(String args, List<SpacePosition> positions) {
 
         try {
 
@@ -155,8 +155,8 @@ public class EffectWrapperStream extends Effect {
 
         try {
 
-            send("init:"+nleds+":"+args+"\r\n");
-            send("positions:"+positions.stream().map(pos -> pos.toString()).collect(Collectors.joining(":")));
+            send("init:" + positions.size() + ":" + args + "\r\n");
+            send("positions:"+positions.stream().map(pos -> pos.toString()).collect(Collectors.joining(":")) + "\r\n");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -180,10 +180,12 @@ public class EffectWrapperStream extends Effect {
                 System.err.println("the extern process returned an array with wrong length, it should be >="+data.length+": "+streamFile);
             }
             int dataOffset = 0;
+
+            ColorModel model = ColorModel.RGB_MODEL;
             if(!in[0].matches(" *\\d{1,10} *")){
                 dataOffset = 1;
+                model = ColorModel.getModel(in[0]);
             }
-            ColorModel model = ColorModel.getModel(in[0]);
 
             if(model == null){
                 System.err.println("color model " + in[0] + "is not known: "+streamFile);
@@ -192,7 +194,7 @@ public class EffectWrapperStream extends Effect {
             for(int i = 0; i < data.length; ++i){
 
                 try {
-                    data[i] = (byte) (Integer.parseInt(in[i].trim()) & 0xFF);
+                    data[dataOffset + i] = (byte) (Integer.parseInt(in[i].trim()) & 0xFF);
                 }catch (NumberFormatException e){
                     System.err.println("the extern process returned a value which can not be casted to byte. string was \""+in[i]+"\": "+streamFile);
                 }
