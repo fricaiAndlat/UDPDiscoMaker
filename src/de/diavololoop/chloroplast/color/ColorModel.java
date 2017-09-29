@@ -13,6 +13,7 @@ public abstract class ColorModel {
     public enum ByteOrder implements Serializable {
         RGB("rgb"),
         GBR("gbr"),
+        GRB("grb"),
         BGR("bgr"),
         BRG("brg"),
         HSV("hsv"),
@@ -41,7 +42,7 @@ public abstract class ColorModel {
             try {
                 return ByteOrder.valueOf(s);
             } catch (IllegalArgumentException e){
-                return ByteOrder.RGB;
+                throw new RuntimeException("unrecognized ByteOrder: "+s);
             }
         }
     }
@@ -57,7 +58,7 @@ public abstract class ColorModel {
     }
 
     public static ColorModel getModel(String name) {
-        return colorModels.get(name);
+        return colorModels.get(name.toLowerCase());
     }
 
     public abstract int getLength();

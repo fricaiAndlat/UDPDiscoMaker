@@ -29,6 +29,11 @@ public class ColorModelRGB extends ColorModel {
                 out[offsetOut + 1] = in[offsetIn + 2];
                 out[offsetOut + 2] = in[offsetIn + 0];
                 return;
+            case GRB:
+                out[offsetOut + 0] = in[offsetIn + 1];
+                out[offsetOut + 1] = in[offsetIn + 0];
+                out[offsetOut + 2] = in[offsetIn + 2];
+                break;
             case BGR:
                 out[offsetOut + 0] = in[offsetIn + 2];
                 out[offsetOut + 1] = in[offsetIn + 1];

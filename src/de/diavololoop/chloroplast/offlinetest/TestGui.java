@@ -8,12 +8,10 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -110,6 +108,9 @@ public class TestGui {
                     break;
                 case GBR:
                     drawLED(toInt(data[offset + 2]), toInt(data[offset + 0]), toInt(data[offset + 1]), pos.x, pos.z);
+                    break;
+                case GRB:
+                    drawLED(toInt(data[offset + 1]), toInt(data[offset + 0]), toInt(data[offset + 2]), pos.x, pos.z);
                     break;
                 case BGR:
                     drawLED(toInt(data[offset + 2]), toInt(data[offset + 1]), toInt(data[offset + 0]), pos.x, pos.z);

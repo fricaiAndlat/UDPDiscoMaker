@@ -13,7 +13,6 @@ public class ColorPicker {
 
     static{
         COLORS.put("black", 0);
-        COLORS.put("blue", 0x0000FF);
         COLORS.put("white", 0xFFFFFF);
         COLORS.put("aqua", 0x00FFFF);
         COLORS.put("aquamarine", 0x7FFFD4);
@@ -67,7 +66,7 @@ public class ColorPicker {
         COLORS.put("gold", 0xffd700);
         COLORS.put("goldenrod", 0xdaa520);
         COLORS.put("gray", 0x808080);
-        COLORS.put("green", 0x008000);
+        COLORS.put("green", 0x00FF00);
         COLORS.put("greenyellow", 0xadff2f);
         COLORS.put("grey", 0x808080);
         COLORS.put("honeydew", 0xf0fff0);

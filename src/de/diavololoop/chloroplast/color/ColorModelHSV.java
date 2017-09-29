@@ -38,6 +38,15 @@ public class ColorModelHSV extends ColorModel{
                         ((int)in[offsetIn + 1]) & 0xFF,
                         ((int)in[offsetIn + 2]) & 0xFF);
                 break;
+            case GRB:
+                convertToRGB(out,
+                        offsetOut + 1,
+                        offsetOut + 0,
+                        offsetOut + 2,
+                        ((int)in[offsetIn]) & 0xFF,
+                        ((int)in[offsetIn + 1]) & 0xFF,
+                        ((int)in[offsetIn + 2]) & 0xFF);
+                break;
             case BGR:
                 convertToRGB(out,
                         offsetOut + 2,
