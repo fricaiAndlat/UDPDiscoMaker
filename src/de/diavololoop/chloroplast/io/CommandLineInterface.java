@@ -35,7 +35,7 @@ public class CommandLineInterface {
                     System.out.println("commands:");
                     System.out.println("\thelp                   | prints this help");
                     System.out.println("\tlist                   | lists all available effects");
-                    System.out.println("\teffect name [args]     | select the effect with given name ");
+                    System.out.println("\teffect <name> [args]     | select the effect with given name ");
                     System.out.println("\tcurrent                | displays current effect");
                     System.out.println("\treload                 | reload the effects directory");
                     System.out.println("\tquit                   | exits the program");
