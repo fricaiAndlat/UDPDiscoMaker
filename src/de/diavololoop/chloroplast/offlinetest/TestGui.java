@@ -72,6 +72,10 @@ public class TestGui {
                     
                     try {
                         socket.receive(packet);
+
+                        graphics.setColor(Color.BLACK);
+                        graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
+
                         decodeBytes(packet.getData(), stripe.byteOrder, stripe.getPositions());
                         canvas.repaint();
                     } catch (IOException e) {
@@ -118,10 +122,10 @@ public class TestGui {
                     drawLED(toInt(buffer[0]), toInt(buffer[1]), toInt(buffer[2]), pos.x, pos.z);
                     break;
                 case RGBW:
-                    int r = toInt(data[0]) / 2;
-                    int g = toInt(data[1]) / 2;
-                    int b = toInt(data[2]) / 2;
-                    int w = toInt(data[3]) / 2;
+                    int r = toInt(data[offset + 0]) / 2;
+                    int g = toInt(data[offset + 1]) / 2;
+                    int b = toInt(data[offset + 2]) / 2;
+                    int w = toInt(data[offset + 3]) / 2;
 
                     drawLED(r + w, g + w, b + w, pos.x, pos.z);
                     break;
@@ -137,7 +141,7 @@ public class TestGui {
 
     private synchronized void drawLED(int r, int g, int b, float x, float z){
         graphics.setColor(new Color(r, g, b));
-        graphics.fillOval((int)((x - xMin) * scale) - 10, (int)((z + yMin) * scale) - 10, 20, 20);
+        graphics.fillOval((int)((x - xMin) * scale) +10, (int)((z + yMin) * scale) + 10, 20, 20);
     }
 
 
