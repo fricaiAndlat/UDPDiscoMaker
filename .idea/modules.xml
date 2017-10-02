@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/UDPDiscoMaker.iml" filepath="$PROJECT_DIR$/UDPDiscoMaker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/EffectServer.iml" filepath="$PROJECT_DIR$/.idea/modules/EffectServer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/EffectServer_main.iml" filepath="$PROJECT_DIR$/.idea/modules/EffectServer_main.iml" group="EffectServer" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/EffectServer_test.iml" filepath="$PROJECT_DIR$/.idea/modules/EffectServer_test.iml" group="EffectServer" />
     </modules>
   </component>
 </project>
