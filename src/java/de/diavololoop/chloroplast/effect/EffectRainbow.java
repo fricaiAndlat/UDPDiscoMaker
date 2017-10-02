@@ -33,7 +33,7 @@ public class EffectRainbow extends Effect {
 
     @Override
     public int getPreferedFPS() {
-        return 60;
+        return 30;
     }
 
     @Override
