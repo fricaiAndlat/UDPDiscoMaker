@@ -9,8 +9,6 @@ import de.diavololoop.chloroplast.offlinetest.TestGui;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.Writer;
 
 /**
  * Created by gast2 on 26.09.17.

@@ -139,6 +139,8 @@ public class EffectWrapperStream extends Effect {
     public void init(String args, List<SpacePosition> positions) {
 
         try {
+
+            isClosed = false;
             process = Runtime.getRuntime().exec(command);
 
             input = new BufferedReader(new InputStreamReader(process.getInputStream(), UTF_8));

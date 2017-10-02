@@ -26,7 +26,7 @@ public class StripeConfiguration {
         } catch (IOException e) {
             throw new IOException("cant read File "+file.getAbsolutePath());
         }
-        configuration = configuration.replaceAll("\r", "\n");
+        configuration = configuration.replaceAll("\r\n", "\n");
         configuration = configuration.replaceAll("/\\*.*?\\*/", "");
         configuration = configuration.replaceAll(" ", "");
         configuration = configuration.replaceAll("\t", "");
@@ -36,11 +36,11 @@ public class StripeConfiguration {
 
             String[] lines = stripe.split("\n");
             if(lines.length < 1){
-                throw new IOException("stripe must start with \"address:port:colormodel\":"+stripe);
+                throw new IOException("stripe must start with \"address:port:colormodel\": "+stripe);
             }
             String[] meta = lines[0].split(":");
             if(meta.length != 3){
-                throw new IOException("stripe must start with \"address:port:colormodel\":"+stripe);
+                throw new IOException("stripe must start with \"address:port:colormodel\": "+stripe);
             }
             String address = redirectAdressToLocalhost ? "localhost" : meta[0];
             int port;

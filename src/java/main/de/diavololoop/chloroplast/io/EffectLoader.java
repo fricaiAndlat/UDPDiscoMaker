@@ -107,7 +107,10 @@ public class EffectLoader {
     }
 
     public void loadCompiledEffect(File file){
-        String className = file.getAbsolutePath().replaceFirst(effectDir.getAbsolutePath(), "").replaceAll("/", ".");
+        String className = file.getAbsolutePath()
+                .replace('\\', '/')
+                .replaceFirst(effectDir.getAbsolutePath().replace('\\', '/'), "")
+                .replaceAll("/", ".");
         className = className.substring(0, className.lastIndexOf('.')).substring(1);
 
         try {
