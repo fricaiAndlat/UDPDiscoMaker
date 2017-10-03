@@ -1,25 +1,26 @@
-package de.diavololoop.chloroplast;
+package de.diavololoop.chloroplast.config;
 
 import de.diavololoop.chloroplast.color.ColorModel;
-import de.diavololoop.chloroplast.util.SpacePosition;
+import de.diavololoop.chloroplast.config.SpacePosition;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by gast2 on 28.09.17.
  */
-public class StripeConfiguration {
+public class Config {
 
     private List<Stripe> stripeList = new ArrayList<Stripe>();
     private List<SpacePosition> positions;
 
-    public StripeConfiguration(File file, boolean redirectAdressToLocalhost) throws IOException {
+    public Config(File file) throws IOException {
         String configuration = null;
         try {
             configuration = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
@@ -42,7 +43,7 @@ public class StripeConfiguration {
             if(meta.length != 3){
                 throw new IOException("stripe must start with \"address:port:colormodel\": "+stripe);
             }
-            String address = redirectAdressToLocalhost ? "localhost" : meta[0];
+            String address = meta[0];
             int port;
             try{
                 port = Integer.parseInt(meta[1]);
@@ -79,7 +80,17 @@ public class StripeConfiguration {
             currentOffset += 3;//stripe.getByteLength();
         }
 
+    }
 
+    public void redirectAllToLocalhost(){
+        Set<Integer> portsInUse = new HashSet<>();
+        stripeList.stream().forEach(stripe -> {
+            while(portsInUse.contains(stripe.port)) {
+                ++stripe.port;
+            }
+            portsInUse.add(stripe.port);
+            stripe.address = "localhost";
+        });
     }
 
     public List<SpacePosition> getPositions(){
@@ -105,8 +116,8 @@ public class StripeConfiguration {
 
 
 
-        public final int port;
-        public final String address;
+        private int port;
+        private String address;
         public final ColorModel.ByteOrder byteOrder;
         private List<SpacePosition> positions = new ArrayList<>();
         private int offset;
@@ -137,5 +148,11 @@ public class StripeConfiguration {
             return positions.size() * byteOrder.length();
         }
 
+        public String getAddress(){
+            return address;
+        }
+        public int getPort(){
+            return port;
+        }
     }
 }

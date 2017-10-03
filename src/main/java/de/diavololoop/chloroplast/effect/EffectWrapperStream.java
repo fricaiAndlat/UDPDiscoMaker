@@ -1,12 +1,10 @@
 package de.diavololoop.chloroplast.effect;
 
 import de.diavololoop.chloroplast.color.ColorModel;
-import de.diavololoop.chloroplast.color.ColorModelRGB;
-import de.diavololoop.chloroplast.util.SpacePosition;
+import de.diavololoop.chloroplast.config.SpacePosition;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;

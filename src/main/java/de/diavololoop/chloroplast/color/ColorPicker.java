@@ -1,4 +1,4 @@
-package de.diavololoop.chloroplast.util;
+package de.diavololoop.chloroplast.color;
 
 import java.util.HashMap;
 import java.util.Map;

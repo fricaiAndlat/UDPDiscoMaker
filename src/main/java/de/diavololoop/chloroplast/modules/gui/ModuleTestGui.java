@@ -1,13 +1,15 @@
-package de.diavololoop.chloroplast.offlinetest;
+package de.diavololoop.chloroplast.modules.gui;
 
-import de.diavololoop.chloroplast.StripeConfiguration;
+import de.diavololoop.chloroplast.config.Config;
+import de.diavololoop.chloroplast.DiscoMaker;
 import de.diavololoop.chloroplast.color.ColorModel;
-import de.diavololoop.chloroplast.util.SpacePosition;
+import de.diavololoop.chloroplast.modules.Module;
+import de.diavololoop.chloroplast.config.SpacePosition;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -17,7 +19,7 @@ import java.util.List;
 /**
  * Created by gast2 on 29.09.17.
  */
-public class TestGui {
+public class ModuleTestGui extends Module {
 
     private final static float border = 0.01f;
 
@@ -31,8 +33,32 @@ public class TestGui {
     private float yMin, yMax;
     private float scale = 0;
 
-    public TestGui(StripeConfiguration config){
+    private Config config;
 
+    public ModuleTestGui(DiscoMaker program){
+        super(program);
+    }
+
+    @Override
+    public String getKey() {
+        return "-t";
+    }
+
+    @Override
+    public int getParameterCount() {
+        return 0;
+    }
+
+    @Override
+    public String init(String[] args) {
+        markLoaded();
+        return null;
+    }
+
+    @Override
+    public String onStart(File root) {
+
+        config = program().getConfig();
         xMin = (float)config.getPositions().stream().mapToDouble(pos -> pos.x).min().orElse(0);
         xMax = (float)config.getPositions().stream().mapToDouble(pos -> pos.x).max().orElse(1);
 
@@ -54,13 +80,13 @@ public class TestGui {
 
         config.getStripes().forEach(this::runServer);
 
-
+        return null;
     }
 
-    private void runServer(StripeConfiguration.Stripe stripe){
+    private void runServer(Config.Stripe stripe){
 
         try {
-            DatagramSocket socket = new DatagramSocket( stripe.port );
+            DatagramSocket socket = new DatagramSocket( stripe.getPort() );
             byte[] buf = new byte[stripe.getByteLength()];
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
 
@@ -152,7 +178,6 @@ public class TestGui {
         graphics.setColor(new Color(r, g, b));
         graphics.fillOval((int)((x - xMin) * scale) +10, (int)((z + yMin) * scale) + 10, 20, 20);
     }
-
 
 
     private class JCanvas extends JPanel {

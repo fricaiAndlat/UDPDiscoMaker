@@ -1,4 +1,4 @@
-package de.diavololoop.chloroplast.util;
+package de.diavololoop.chloroplast.config;
 
 /**
  * Created by gast2 on 28.09.17.

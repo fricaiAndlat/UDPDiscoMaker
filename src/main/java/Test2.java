@@ -1,7 +1,7 @@
 
 import de.diavololoop.chloroplast.color.ColorModel;
 import de.diavololoop.chloroplast.effect.SimplifiedEffect;
-import de.diavololoop.chloroplast.util.SpacePosition;
+import de.diavololoop.chloroplast.config.SpacePosition;
 
 public class Test2 extends SimplifiedEffect{
 

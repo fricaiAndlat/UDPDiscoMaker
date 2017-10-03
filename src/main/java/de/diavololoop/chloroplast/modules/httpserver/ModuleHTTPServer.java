@@ -1,12 +1,12 @@
-package de.diavololoop.chloroplast.io;
+package de.diavololoop.chloroplast.modules.httpserver;
 
 import de.diavololoop.chloroplast.DiscoMaker;
 import de.diavololoop.chloroplast.effect.Effect;
+import de.diavololoop.chloroplast.modules.Module;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -17,28 +17,20 @@ import java.util.stream.Collectors;
 /**
  * Created by gast2 on 27.09.17.
  */
-public class WebInterface {
+public class ModuleHTTPServer extends Module {
 
     private File interfaceDir;
-    private ArrayList<WebInterface.Connection> connections = new ArrayList<WebInterface.Connection>();
+    private ArrayList<ModuleHTTPServer.Connection> connections = new ArrayList<>();
     private ServerSocket server;
 
     private String site = "HELLO WORLD";
     private int siteLen = site.getBytes().length;
 
-    private DiscoMaker discoMaker;
+    private int port;
 
-    public WebInterface(File root, DiscoMaker discoMaker, int port) throws IOException {
 
-        this.discoMaker = discoMaker;
-
-        makeDirectory(root);
-        readInterface();
-
-        server = new ServerSocket(port);
-        Thread accepter = new Thread(this::runAccept);
-        accepter.start();
-
+    public ModuleHTTPServer(DiscoMaker discoMaker) {
+        super(discoMaker);
     }
 
     private void readInterface() throws IOException {
@@ -56,9 +48,9 @@ public class WebInterface {
                 output.write(buffer, 0, len);
             }
 
-            input.close();
             output.flush();
             output.close();
+            input.close();
         }
 
         site = new String(Files.readAllBytes(htmlFile.toPath()), StandardCharsets.UTF_8);
@@ -123,13 +115,13 @@ public class WebInterface {
     }
 
     synchronized private void requestEffect(String effectName, String args){
-        Effect effect = discoMaker.getEffectLoader().allEffects().get(effectName);
+        Effect effect = program().getEffectLoader().allEffects().get(effectName);
 
         if(effect == null){
             System.out.println("Effect "+effectName+" does not exists");
         }else{
             System.out.println("set Effect to " + effect.getName() + "#"+args);
-            discoMaker.setEffect(effect, args);
+            program().setEffect(effect, args);
         }
     }
 
@@ -172,6 +164,46 @@ public class WebInterface {
         output.flush();
 
 
+    }
+
+    @Override
+    public String getKey() {
+        return "-http";
+    }
+
+    @Override
+    public int getParameterCount() {
+        return 1;
+    }
+
+    @Override
+    public String init(String[] args) {
+        markLoaded();
+
+        String portString = args[0].trim();
+
+        if(!portString.matches("\\d{1,5}")){
+            return "cant start httpserver, given port is not valid: "+portString;
+        }
+
+        port = Integer.parseInt(portString);
+        return null;
+    }
+
+    @Override
+    public String onStart(File root) {
+
+        try {
+            makeDirectory(root);
+            readInterface();
+            server = new ServerSocket(port);
+            Thread accepter = new Thread(this::runAccept);
+            accepter.start();
+        } catch (IOException e) {
+            return e.getMessage();
+        }
+
+        return null;
     }
 
     private class Connection {

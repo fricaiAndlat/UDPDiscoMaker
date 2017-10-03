@@ -1,11 +1,13 @@
 package de.diavololoop.chloroplast.io;
 
-import de.diavololoop.chloroplast.StripeConfiguration;
+import de.diavololoop.chloroplast.config.Config;
 import de.diavololoop.chloroplast.color.ColorModel;
 
 import java.io.IOException;
-import java.net.*;
-import java.util.Arrays;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,22 +17,22 @@ import java.util.Map;
 public class Sender {
 
     private DatagramSocket clientSocket;
-    private StripeConfiguration configuration;
+    private Config configuration;
 
-    private Map<StripeConfiguration.Stripe, InetAddress> addresses = new HashMap<>();
-    private Map<StripeConfiguration.Stripe, byte[]> buffers = new HashMap<>();
+    private Map<Config.Stripe, InetAddress> addresses = new HashMap<>();
+    private Map<Config.Stripe, byte[]> buffers = new HashMap<>();
 
-    public Sender(StripeConfiguration configuration) throws IOException {
+    public Sender(Config configuration) throws IOException {
 
         this.configuration = configuration;
 
-        for(StripeConfiguration.Stripe stripe: configuration.getStripes()){
+        for(Config.Stripe stripe: configuration.getStripes()){
 
             try {
-                addresses.put(stripe, InetAddress.getByName(stripe.address));
+                addresses.put(stripe, InetAddress.getByName(stripe.getAddress()));
                 buffers.put(stripe, new byte[stripe.getByteLength()]);
             } catch (UnknownHostException e) {
-                throw new IOException("unknow host: "+stripe.address);
+                throw new IOException("unknow host: "+stripe.getAddress());
             }
 
         }
@@ -41,13 +43,13 @@ public class Sender {
 
     public void send(byte[] data, ColorModel model){
 
-        for(StripeConfiguration.Stripe stripe: configuration.getStripes()){
+        for(Config.Stripe stripe: configuration.getStripes()){
 
             byte[] buffer = buffers.get(stripe);
             InetAddress address = addresses.get(stripe);
             stripe.copyData(data, buffer, model);
 
-            DatagramPacket sendPacket = new DatagramPacket(buffer, buffer.length, address, stripe.port);
+            DatagramPacket sendPacket = new DatagramPacket(buffer, buffer.length, address, stripe.getPort());
             try {
                 clientSocket.send(sendPacket);
 

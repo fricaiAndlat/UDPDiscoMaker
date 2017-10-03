@@ -2,7 +2,7 @@ package effects;
 
 import de.diavololoop.chloroplast.color.ColorModel;
 import de.diavololoop.chloroplast.effect.SimplifiedEffect;
-import de.diavololoop.chloroplast.util.SpacePosition;
+import de.diavololoop.chloroplast.config.SpacePosition;
 
 /**
  * Created by gast2 on 01.10.17.

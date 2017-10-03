@@ -1,7 +1,7 @@
 package de.diavololoop.chloroplast.effect;
 
 import de.diavololoop.chloroplast.color.ColorModel;
-import de.diavololoop.chloroplast.util.SpacePosition;
+import de.diavololoop.chloroplast.config.SpacePosition;
 
 import java.util.List;
 

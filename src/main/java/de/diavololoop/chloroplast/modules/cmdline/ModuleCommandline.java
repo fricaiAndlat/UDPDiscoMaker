@@ -1,9 +1,11 @@
-package de.diavololoop.chloroplast.io;
+package de.diavololoop.chloroplast.modules.cmdline;
 
 import de.diavololoop.chloroplast.DiscoMaker;
 import de.diavololoop.chloroplast.effect.Effect;
+import de.diavololoop.chloroplast.modules.Module;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -11,16 +13,28 @@ import java.nio.charset.StandardCharsets;
 /**
  * Created by gast2 on 26.09.17.
  */
-public class CommandLineInterface {
+public class ModuleCommandline extends Module {
 
-    private DiscoMaker discoMaker;
-
-    public CommandLineInterface(DiscoMaker discoMaker){
-        this.discoMaker = discoMaker;
-
-        Thread inputThread = new Thread(this::inputLoop);
-        inputThread.start();
+    public ModuleCommandline(DiscoMaker discoMaker) {
+        super(discoMaker);
     }
+
+    @Override
+    public String getKey() {
+        return "-i";
+    }
+
+    @Override
+    public int getParameterCount() {
+        return 0;
+    }
+
+    @Override
+    public String init(String[] args) {
+        super.markLoaded();
+        return null;
+    }
+
 
     private void inputLoop() {
         try{
@@ -35,7 +49,7 @@ public class CommandLineInterface {
                     System.out.println("commands:");
                     System.out.println("\thelp                   | prints this help");
                     System.out.println("\tlist                   | lists all available effects");
-                    System.out.println("\teffect <name> [args]     | select the effect with given name ");
+                    System.out.println("\teffect <name> [args]   | select the effect with given name");
                     System.out.println("\tcurrent                | displays current effect");
                     System.out.println("\treload                 | reload the effects directory");
                     System.out.println("\tquit                   | exits the program");
@@ -47,7 +61,7 @@ public class CommandLineInterface {
                         System.out.print('-');
                     }
                     System.out.println();
-                    discoMaker.getEffectLoader().allEffects().values().forEach(effect -> System.out.printf("\t%-16s | %-32s | %-16s\r\n", effect.getName(), effect.getDescription(), effect.getAuthor()));
+                    program().getEffectLoader().allEffects().values().forEach(effect -> System.out.printf("\t%-16s | %-32s | %-16s\r\n", effect.getName(), effect.getDescription(), effect.getAuthor()));
                     System.out.print("\r\n> ");
                 }else if(cmd[0].equalsIgnoreCase("effect") && cmd.length >= 2){
                     String effectName = cmd[1];
@@ -56,35 +70,47 @@ public class CommandLineInterface {
                         args = cmd[2];
                     }
 
-                    Effect effect = discoMaker.getEffectLoader().allEffects().get(effectName);
+                    Effect effect = program().getEffectLoader().allEffects().get(effectName);
 
                     if(effect == null){
                         System.out.println("Effect "+effectName+" does not exists");
                     }else{
-                        System.out.println("set Effect to " + effect.getName() + "#"+args);
-                        discoMaker.setEffect(effect, args);
+                        System.out.print("> ");
+                        program().setEffect(effect, args);
                     }
-                    System.out.print("> ");
+
                 }else if(cmd[0].equalsIgnoreCase("current")){
                     System.out.println("current Effect:");
-                    System.out.println("\tname:        "+discoMaker.getEffect().getName());
-                    System.out.println("\tdescription: "+discoMaker.getEffect().getDescription());
-                    System.out.println("\tautor:       "+discoMaker.getEffect().getAuthor());
-                    System.out.println("\tprefFps:     "+discoMaker.getEffect().getPreferedFPS());
+                    System.out.println("\tname:        "+program().getEffect().getName());
+                    System.out.println("\tdescription: "+program().getEffect().getDescription());
+                    System.out.println("\tautor:       "+program().getEffect().getAuthor());
+                    System.out.println("\tprefFps:     "+program().getEffect().getPreferedFPS());
                     System.out.print("> ");
                 }else if(cmd[0].equalsIgnoreCase("reload")){
-                    discoMaker.getEffectLoader().loadEffects();
+                    program().reload();
                     System.out.print("> ");
                 }else if(cmd[0].equalsIgnoreCase("quit")){
-                    discoMaker.exit();
+                    program().exit();
                 }
 
             }
         } catch (IOException e) {
-            discoMaker.exit();
+            program().exit();
         }
 
     }
 
+    @Override
+    public String onStart(File root) {
+        Thread inputThread = new Thread(this::inputLoop);
+        inputThread.start();
+        return null;
+    }
 
+    @Override
+    public void onEffectChange(Effect effect) {
+        System.out.print("\b\b");
+        System.out.println("now playing effect " + effect.getName());
+        System.out.print(" >");
+    }
 }
