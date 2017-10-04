@@ -111,6 +111,6 @@ public class ModuleCommandline extends Module {
     public void onEffectChange(Effect effect) {
         System.out.print("\b\b");
         System.out.println("now playing effect " + effect.getName());
-        System.out.print(" >");
+        System.out.print("> ");
     }
 }

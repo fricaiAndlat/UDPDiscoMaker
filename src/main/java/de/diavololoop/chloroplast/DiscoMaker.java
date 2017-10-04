@@ -66,7 +66,7 @@ public class DiscoMaker {
         return effectLoader;
     }
 
-    public void setEffect(Effect effect, String args){
+    public synchronized void setEffect(Effect effect, String args){
         if(!isReady){
             throw new IllegalStateException("init must be called first");
         }

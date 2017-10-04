@@ -1,6 +1,7 @@
 package de.diavololoop.chloroplast.modules.websocket;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import de.diavololoop.chloroplast.DiscoMaker;
 import de.diavololoop.chloroplast.effect.Effect;
 import de.diavololoop.chloroplast.modules.Module;
@@ -56,11 +57,13 @@ public class ModuleWebSocket extends Module {
 
     @Override
     public String onStart(File root) {
-        connections = new LinkedList<WebSocket>();
+        connections = new LinkedList<>();
         gson = new Gson();
 
         webSocket = new EffectWebSocket(port);
         webSocket.start();
+        System.out.println("created websocket");
+
         return null;
     }
 
@@ -106,22 +109,35 @@ public class ModuleWebSocket extends Module {
 
         @Override
         public void onMessage(WebSocket conn, String message) {
-            Request request = gson.fromJson(message, Request.class);
 
-            if(request.type.equalsIgnoreCase("effect")){
-                Effect effect = program().getEffectLoader().allEffects().get(request.name);
 
-                if(effect == null) {
-                    Request answer = new Request("error", "effect was not found", null);
-                    conn.send(gson.toJson(answer));
-                    return;
+            try {
+
+                Request request = gson.fromJson(message, Request.class);
+
+                if(request.type.equalsIgnoreCase("effect")){
+                    Effect effect = program().getEffectLoader().allEffects().get(request.name);
+
+                    if(effect == null) {
+                        Request answer = new Request("error", "effect was not found", null);
+                        conn.send(gson.toJson(answer));
+                        return;
+                    }
+
+                    program().setEffect(effect, request.args);
+
+                    EffectNotification notification = new EffectNotification(effect);
+                    connections.forEach(con -> con.send(gson.toJson(notification)));
                 }
 
-                program().setEffect(effect, request.args);
 
-                EffectNotification notification = new EffectNotification(effect);
-                connections.forEach(con -> con.send(gson.toJson(notification)));
+
+            } catch (JsonSyntaxException e){
+                Request errorAnswer = new Request("error", "json syntax was not valid", null);
+                conn.send(gson.toJson(errorAnswer));
             }
+
+
         }
 
         @Override

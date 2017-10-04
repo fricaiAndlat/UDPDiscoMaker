@@ -4,13 +4,15 @@
     <script>
         var socket = new WebSocket("ws://localhost:8060");
 
+        // callback-Funktion wird gerufen, wenn die Verbindung erfolgreich aufgebaut werden konnte
         socket.onopen = function () {
             console.log("Verbindung wurde erfolgreich aufgebaut");
         };
 
+        // callback-Funktion wird gerufen, wenn eine neue Websocket-Nachricht eintrifft
         socket.onmessage = function (messageEvent) {
 			var notification = JSON.parse(messageEvent.data);
-
+			
 			if(notification.type == "error"){
 				alert("error: " + notification.name);
 			}else if(notification.type == "effect"){
@@ -19,16 +21,15 @@
 			}
         };
 
+        // callback-Funktion wird gerufen, wenn ein Fehler auftritt
         socket.onerror = function (errorEvent) {
             console.log("Error! Die Verbindung wurde unerwartet geschlossen");
-
         };
 
         socket.onclose = function (closeEvent) {
             console.log('Die Verbindung wurde geschlossen --- Code: ' + closeEvent.code + ' --- Grund: ' + closeEvent.reason);
-			alert("websocket connection was closed");
         };
-
+        
         function effect(name, args) {
 			request = {
 				"type": "effect",
@@ -36,19 +37,7 @@
 				"args": args
 				};
 			socket.send(JSON.stringify(request));
-		}
-		function effect_rainbow() {
-			rainbow_speed = document.getElementById("rainbow-speed");
-			rainbow_light = document.getElementById("rainbow-light");
-			rainbow_saturation = document.getElementById("rainbow-saturation");
-			rainbow_freq = document.getElementById("rainbow-freq");
-			effect("Rainbow", "speed=" + rainbow_speed.value + "&light=" + rainbow_light.value + "&saturation=" + rainbow_saturation.value + "&freq=" + rainbow_freq.value);
-		}
-		function effect_rblink(){
-			rblink_p = document.getElementById("rblink-p");
-			rblink_color = document.getElementById("rblink-color");
-			rblink_back = document.getElementById("rblink-back");
-			effect("RandomBlink", "p=" + rblink_p.value + "&color=" + rblink_color.value + "&back=" + rblink_back.value);
+			
 		}
 
     </script>
@@ -131,20 +120,27 @@
     <div class="menu-element">
         <h3>Rainbow</h3>
         <form action="/Rainbow" method="GET">
-            <div class="formtext">Speed </div>     <input type="number" name="speed"      value="1" step="0.01" id="rainbow-speed" />
-            <div class="formtext">Light </div>     <input type="number" name="light"      value="1" step="0.01" id="rainbow-light" />
-            <div class="formtext">Saturation </div><input type="number" name="saturation" value="1" step="0.01" id="rainbow-saturation" />
-            <div class="formtext">Frequency </div> <input type="number" name="freq"       value="16"            id="rainbow-freq" />
-            <input type="submit" value="Send" onclick="effect_rainbow();return false;"/>
+            <div class="formtext">Speed </div>
+            <input type="number" name="speed" value="1" step="0.01" />
+            <div class="formtext">Light </div>
+            <input type="number" name="light" value="1" step="0.01" />
+            <div class="formtext">Saturation </div>
+            <input type="number" name="saturation" value="1" step="0.01" />
+            <div class="formtext">Frequency </div>
+            <input type="number" name="freq" value="16" />
+            <input type="submit" value="Send" />
         </form>
     </div>
     <div class="menu-element">
-        <h3>RBlink</h3>
+        <h3>Rainbow</h3>
         <form action="/RandomBlink" method="GET">
-            <div class="formtext">propability </div><input type="number" name="p"     value="16"    id="rblink-p"/>
-            <div class="formtext">Light On</div>    <input type="text"   name="color" value="white" id="rblink-color"/>
-            <div class="formtext">Light Off</div>   <input type="text"   name="back"  value="black" id="rblink-back"/>
-            <input type="submit" value="Send" onclick="effect_rblink();return false;"/>
+            <div class="formtext">propability </div>
+            <input type="number" name="p" value="16" />
+            <div class="formtext">Light On</div>
+            <input type="text" name="color" value="yellow"/>
+            <div class="formtext">Light Off</div>
+            <input type="text" name="back" value="yellow"/>
+            <input type="submit" value="Send" />
         </form>
     </div>
 </div>

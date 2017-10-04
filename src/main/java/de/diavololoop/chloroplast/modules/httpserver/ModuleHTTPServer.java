@@ -3,13 +3,11 @@ package de.diavololoop.chloroplast.modules.httpserver;
 import de.diavololoop.chloroplast.DiscoMaker;
 import de.diavololoop.chloroplast.effect.Effect;
 import de.diavololoop.chloroplast.modules.Module;
+import fi.iki.elonen.NanoHTTPD;
 
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,26 +18,39 @@ import java.util.stream.Collectors;
 public class ModuleHTTPServer extends Module {
 
     private File interfaceDir;
-    private ArrayList<ModuleHTTPServer.Connection> connections = new ArrayList<>();
-    private ServerSocket server;
 
-    private String site = "HELLO WORLD";
-    private int siteLen = site.getBytes().length;
+    private String site;
+    private String siteNotFound;
+    private String siteNotImplemented;
 
     private int port;
+
+    private HTTPServer server;
 
 
     public ModuleHTTPServer(DiscoMaker discoMaker) {
         super(discoMaker);
     }
 
-    private void readInterface() throws IOException {
+    private void readFiles() throws IOException {
 
         File htmlFile = new File(interfaceDir, "WebInterface.html");
 
         if(!htmlFile.isFile()){
-            htmlFile.createNewFile();
-            InputStream input = this.getClass().getResourceAsStream("WebInterface.html");
+            boolean canCreate = htmlFile.createNewFile();
+            if (!canCreate) {
+                throw new IOException("cant create File " + htmlFile.getAbsolutePath());
+            }
+
+            //wait for file to be created
+            while(!htmlFile.exists()){
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            InputStream input = ModuleHTTPServer.class.getResourceAsStream("WebInterface.html");
             OutputStream output = new FileOutputStream(htmlFile);
 
             byte[] buffer = new byte[1024];
@@ -54,7 +65,6 @@ public class ModuleHTTPServer extends Module {
         }
 
         site = new String(Files.readAllBytes(htmlFile.toPath()), StandardCharsets.UTF_8);
-        siteLen = site.getBytes(StandardCharsets.UTF_8).length;
 
         List<File> loadedFiles = Arrays.asList(interfaceDir.listFiles());
 
@@ -63,7 +73,8 @@ public class ModuleHTTPServer extends Module {
         site = site.replaceAll("\\{% load-scripts %}", loadAllFilesEndWith(loadedFiles, ".js"));
         site = site.replaceAll("\\{% load-css %}", loadAllFilesEndWith(loadedFiles, ".css"));
 
-
+        siteNotFound = "<html><title>404 - NOT FOUND</title><body><h1>Resource not found</h1></body></html>";
+        siteNotImplemented = "<html><title>501 - NOT IMPLEMENTED</title><body><h1>501 - Not implemented</h1><h2>this server supports only GET requests</h2></body></html>";
 
     }
 
@@ -85,23 +96,8 @@ public class ModuleHTTPServer extends Module {
                 //.replaceAll("\"", "'");
     }
 
-    private void runAccept() {
-
-        while(!Thread.currentThread().isInterrupted()) {
-
-            try {
-                connections.removeIf(con -> con.isDead);
-                connections.add(new Connection(server.accept()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-    }
-
     private  void makeDirectory(File root){
-        interfaceDir = new File(root, "webinterface");
+        interfaceDir = new File(root, "website");
         if(interfaceDir.isFile()){
             throw new RuntimeException("can't create directory "+interfaceDir.getAbsolutePath()+" - a file with the same name already exists");
         }
@@ -114,57 +110,6 @@ public class ModuleHTTPServer extends Module {
         }
     }
 
-    synchronized private void requestEffect(String effectName, String args){
-        Effect effect = program().getEffectLoader().allEffects().get(effectName);
-
-        if(effect == null){
-            System.out.println("Effect "+effectName+" does not exists");
-        }else{
-            System.out.println("set Effect to " + effect.getName() + "#"+args);
-            program().setEffect(effect, args);
-        }
-    }
-
-    private void request(BufferedReader input, Writer output) throws IOException {
-        String line = input.readLine();
-        if(line == null){
-            throw new IOException("error reading data");
-        }
-        String[] head = line.split(" ");
-        if(head.length < 2){
-            throw new IOException("received Header doesn't match HTTP");
-        }
-        head[1] = head[1].substring(1);
-        int pos = head[1].indexOf("?");
-        if(pos == -1){
-            requestEffect(head[1], "");
-        }else{
-            String effectName = head[1].substring(0, pos);
-            String effectArgs = head[1].substring(pos+1);
-            requestEffect(effectName, effectArgs);
-        }
-
-
-
-        while(null != (line = input.readLine())){
-            if(line.equals("")){
-                break;
-            }
-        }
-
-        output.write("HTTP/1.1 200 OK\n");
-        output.write("Content-Type: text/html; charset=UTF-8\n");
-        output.write("Content-Encoding: UTF-8\n");
-        output.write("Content-Length: " + siteLen + "\n");
-        output.write("UDPDiscoMaker WebInterface\n");
-        output.write("Connection: keep-alive\n");
-        output.write("\n");
-        output.write(site);
-        //output.write("\n");
-        output.flush();
-
-
-    }
 
     @Override
     public String getKey() {
@@ -195,10 +140,9 @@ public class ModuleHTTPServer extends Module {
 
         try {
             makeDirectory(root);
-            readInterface();
-            server = new ServerSocket(port);
-            Thread accepter = new Thread(this::runAccept);
-            accepter.start();
+            readFiles();
+
+            server = new HTTPServer(port);
         } catch (IOException e) {
             return e.getMessage();
         }
@@ -206,57 +150,55 @@ public class ModuleHTTPServer extends Module {
         return null;
     }
 
-    private class Connection {
+    @Override
+    public void onReaload() {
 
-        boolean isDead = false;
-
-        private BufferedReader input;
-        private Writer output;
-        private Socket socket;
-
-        Thread listener;
-
-        public Connection(Socket socket){
-
-            this.socket = socket;
-
-            try {
-                input = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-                output = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
-
-                listener = new Thread(this::run);
-                listener.start();
-            } catch (IOException e) {
-                isDead = true;
-            }
-
+        try {
+            readFiles();
+        } catch (IOException e) {
+            System.err.println("error while reading webserver files");
+            program().exit();
         }
 
-        private void run() {
+    }
 
-            while(!listener.isInterrupted()){
+    private class HTTPServer extends NanoHTTPD {
 
-                try {
-                    request(input, output);
-                    socket.close();
-                    listener.interrupt();
+        public HTTPServer(int port) throws IOException {
+            super(port);
+            start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
+        }
 
-                } catch (IOException e) {
-                    isDead = true;
-                    listener.interrupt();
-                    e.printStackTrace();
-                    try {
-                        socket.close();
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
+        @Override
+        public Response serve(IHTTPSession session) {
+            if (session.getMethod() == Method.GET) {
+
+                if (session.getUri().equals("/")) {
+                    return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, site);
+                } else if (session.getUri().equals("/favicon.ico")) {
+                    return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, siteNotFound);
                 }
 
+                String effectName = session.getUri().substring(1);
+                Effect effect = program().getEffectLoader().allEffects().get(effectName);
+
+                if (effect == null) {
+                    return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, siteNotFound);
+                }
+                String args = session.getQueryParameterString();
+                if (args == null) {
+                    program().setEffect(effect, "");
+                } else {
+                    program().setEffect(effect, args);
+                }
+
+
+
+                return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, site);
             }
 
+            return newFixedLengthResponse(Response.Status.NOT_IMPLEMENTED, NanoHTTPD.MIME_HTML, siteNotImplemented);
         }
-
-
     }
 
 
