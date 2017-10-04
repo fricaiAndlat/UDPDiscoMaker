@@ -50,13 +50,15 @@ public class EffectLoader {
         files.stream().filter(file -> file.getName().endsWith(".stream")).forEach(this::loadStreamedEffect);
         files.stream().filter(file -> file.getName().endsWith(".class")).forEach(this::loadCompiledEffect);
 
-        Effect basicColor = new EffectBasicColor();
+        Effect basicColor = new EffectSimpleColor();
         Effect rainbow = new EffectRainbow();
         Effect blinker = new EffectRandomBlink();
+        Effect queue = new EffectQueue();
 
         effects.put(basicColor.getName(), basicColor);
         effects.put(rainbow.getName(), rainbow);
         effects.put(blinker.getName(), blinker);
+        effects.put(queue.getName(), queue);
 
 
 
@@ -133,4 +135,5 @@ public class EffectLoader {
             System.err.println("cant load compiled effect "+className+": "+e.getMessage());
         }
     }
+
 }

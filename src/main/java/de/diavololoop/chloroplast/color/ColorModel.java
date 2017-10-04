@@ -2,6 +2,7 @@ package de.diavololoop.chloroplast.color;
 
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,12 +51,14 @@ public abstract class ColorModel {
 
     public static ColorModel RGB_MODEL = new ColorModelRGB();
     public static ColorModel HSV_MODEL = new ColorModelHSV();
+    public static ColorModel RGBW_MODEL = new ColorModelRGBW();
 
     private static Map<String, ColorModel> colorModels = new HashMap<String, ColorModel>();
 
     static{
-        colorModels.put("rgb", new ColorModelRGB());
-        colorModels.put("hsv", new ColorModelHSV());
+        colorModels.put("rgb", RGB_MODEL);
+        colorModels.put("hsv", HSV_MODEL);
+        colorModels.put("rgbw", RGBW_MODEL);
     }
 
     public static ColorModel getModel(String name) {
@@ -80,6 +83,10 @@ public abstract class ColorModel {
 
         }
 
+    }
+
+    public static final int maxByteLength(){
+        return Arrays.stream(ColorModel.ByteOrder.values()).mapToInt(o -> o.length()).max().getAsInt();
     }
 
 }

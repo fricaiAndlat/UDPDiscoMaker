@@ -1,5 +1,6 @@
 package de.diavololoop.chloroplast;
 
+import de.diavololoop.chloroplast.color.ColorModel;
 import de.diavololoop.chloroplast.config.Config;
 import de.diavololoop.chloroplast.effect.Effect;
 import de.diavololoop.chloroplast.io.EffectLoader;
@@ -53,7 +54,7 @@ public class DiscoMaker {
         currentEffect = effectLoader.allEffects().get("SimpleColor");
         currentEffect.init("black", configuration.getPositions());
 
-        player = new EffectPlayer(sender, currentEffect, config.getPositions().size() * 3);
+        player = new EffectPlayer(sender, currentEffect, config.getPositions().size() * ColorModel.maxByteLength());
 
     }
 

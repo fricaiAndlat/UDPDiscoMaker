@@ -1,9 +1,24 @@
 {
+  "colorcorrection": {
+    "honeyrgbw": {
+      "rr": 255, "gr":   0, "br":   0, "wr":   0,
+      "rg": -80, "gg": 255, "bg":   0, "wg":   0,
+      "rb": -50, "gb":   0, "bb": 255, "wb":   0,
+      "rw":   0, "gw":   0, "bw":   0, "ww": 255
+    },
+    "honeyrgb": {
+      "rr": 255, "gr":   0, "br":   0, "wr":   0,
+      "rg": -40, "gg": 255, "bg":   0, "wg":   0,
+      "rb": -40, "gb":   0, "bb": 255, "wb":   0,
+      "rw":   0, "gw":   0, "bw":   0, "ww": 255
+    }
+  },
   "stripes": [
     {
       "address": "10.0.0.152",
       "port": 1234,
       "byteorder": "GRBW",
+      "cc": "honeyrgbw",
       "positions": [
         {"x": 0, "z":  0},
         {"x": 0, "z":  1},
@@ -53,9 +68,10 @@
       ]
     },
     {
-      "address": "10.0.0.196",
-      "port": 1235,
+      "address": "10.0.0.204",
+      "port": 1234,
       "byteorder": "GRB",
+      "cc": "honeyrgb",
       "positions": [
         {"x": 10, "z":  0},
         {"x": 10, "z":  1},

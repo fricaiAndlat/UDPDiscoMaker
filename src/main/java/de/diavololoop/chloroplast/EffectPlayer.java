@@ -94,7 +94,9 @@ public class EffectPlayer {
                             playThread.interrupt();
                         }
                     }else{
-                        //System.err.println("cant keep up or effect is not quick enough");
+                        if(timeToWait < -50){
+                            System.err.println("cant keep up or effect is not quick enough");
+                        }
                     }
                 }
 

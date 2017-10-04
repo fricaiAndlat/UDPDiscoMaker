@@ -50,10 +50,10 @@
 			rblink_back = document.getElementById("rblink-back");
 			effect("RandomBlink", "p=" + rblink_p.value + "&color=" + rblink_color.value + "&back=" + rblink_back.value);
 		}
-
-
+		
+		
 		function effect_queue_darude() {
-
+			
 			effectQueue = {
 				"layer": [
 					{
@@ -83,12 +83,12 @@
 				]
 			};
 			effect("EffectQueue", JSON.stringify(effectQueue));
-
+			
 			soundboard("darude.wav");
 		}
-
+		
 		function effect_queue_runninginthe90s() {
-
+			
 			effectQueue = {
 				"layer": [
 					{
@@ -98,7 +98,7 @@
 								"length": 0,
 								"cycleLen": 0,
 								"fade": 750,
-
+								
 							},
 							{
 								"name": "colorblink",
@@ -109,7 +109,7 @@
 								"scaleX": 750,
 								"scaleY": 700,
 								"scaleZ": 1
-
+								
 							},
 							{
 								"name": "colorblink",
@@ -140,7 +140,7 @@
 								"length": 1450,
 								"cycleLen": 1450,
 								"fade": 0,
-
+								
 							},
 							{
 								"name": "flashing",
@@ -149,8 +149,8 @@
 								"cycleLen": 385,
 								"scaleX": 100,
 								"onW": 1
-
-							},
+								
+							},							
 							{
 								"name": "colorblink",
 								"length": 99999999,
@@ -166,10 +166,10 @@
 				]
 			};
 			effect("EffectQueue", JSON.stringify(effectQueue));
-
+			
 			soundboard("runninginthe90s.wav");
 		}
-
+		
 		function soundboard(filename) {
 			var xmlhttp = new XMLHttpRequest();
 			var url = "http://10.0.0.10:8080/play/" + filename;
@@ -286,3 +286,11 @@
 </div>
 </body>
 </html>
+
+
+
+    r  g  b  w
+r
+g
+b
+w

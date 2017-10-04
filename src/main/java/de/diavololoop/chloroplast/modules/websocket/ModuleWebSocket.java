@@ -62,7 +62,6 @@ public class ModuleWebSocket extends Module {
 
         webSocket = new EffectWebSocket(port);
         webSocket.start();
-        System.out.println("created websocket");
 
         return null;
     }

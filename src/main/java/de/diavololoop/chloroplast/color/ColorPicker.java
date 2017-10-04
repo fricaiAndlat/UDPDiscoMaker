@@ -13,7 +13,7 @@ public class ColorPicker {
 
     static{
         COLORS.put("black", 0);
-        COLORS.put("white", 0xFFFFFF);
+        COLORS.put("white", 0xFFFFFFFF);
         COLORS.put("aqua", 0x00FFFF);
         COLORS.put("aquamarine", 0x7FFFD4);
         COLORS.put("azure", 0xf0ffff);
@@ -170,7 +170,7 @@ public class ColorPicker {
         }
 
         s = s.trim().toLowerCase().replaceAll("[^a-f0-9]", "");
-        if(s.length() != 6){
+        if(s.length() != 6 && s.length() != 8){
             return 0;
         }
 
@@ -193,8 +193,6 @@ public class ColorPicker {
                 case 'd': result = (result << 4) | 0xd; break;
                 case 'e': result = (result << 4) | 0xe; break;
                 case 'f': result = (result << 4) | 0xf; break;
-
-
             }
         }
         return result;
@@ -205,7 +203,13 @@ public class ColorPicker {
         target[offset + 0] = (byte)(c >> 16);
         target[offset + 1] = (byte)(c >> 8);
         target[offset + 2] = (byte)c;
-
+    }
+    public static void getColorRGBW(String color, byte[] target, int offset){
+        int c = getColor(color);
+        target[offset + 0] = (byte)(c >> 16);
+        target[offset + 1] = (byte)(c >> 8);
+        target[offset + 2] = (byte)c;
+        target[offset + 3] = (byte)(c >> 24);
     }
 
 }

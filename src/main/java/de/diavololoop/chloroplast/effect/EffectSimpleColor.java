@@ -10,9 +10,9 @@ import java.util.List;
 /**
  * Created by gast2 on 26.09.17.
  */
-public class EffectBasicColor extends Effect {
+public class EffectSimpleColor extends Effect {
 
-    byte[] rgb = new byte[3];
+    byte[] rgbw = new byte[4];
 
     @Override
     public String getName() {
@@ -36,17 +36,17 @@ public class EffectBasicColor extends Effect {
 
     @Override
     public void init(String args, List<SpacePosition> positions) {
-        ColorPicker.getColor(args, rgb, 0);
+        ColorPicker.getColorRGBW(args, rgbw, 0);
     }
 
     @Override
     public ColorModel update(long time, int step, byte[] data) {
 
         for(int i = 0; i < data.length; ++i){
-            data[i] = rgb[i%3];
+            data[i] = rgbw[i%4];
         }
 
-        return ColorModel.RGB_MODEL;
+        return ColorModel.RGBW_MODEL;
     }
 
     @Override

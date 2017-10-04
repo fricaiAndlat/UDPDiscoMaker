@@ -12,8 +12,8 @@ import java.util.Random;
  */
 public class EffectRandomBlink extends Effect{
 
-    private byte[] colorOn = new byte[3];
-    private byte[] colorOff = new byte[3];
+    private byte[] colorOn = new byte[4];
+    private byte[] colorOff = new byte[4];
     private int propability = 50;
     private Random r = new Random();
 
@@ -40,8 +40,8 @@ public class EffectRandomBlink extends Effect{
     @Override
     public void init(String args, List<SpacePosition> positions) {
         propability = 50;
-        colorOn[0] = colorOn[1] = colorOn[2] = -1;
-        colorOff[0] = colorOff[1] = colorOff[2] = 0;
+        colorOn[0] = colorOn[1] = colorOn[2] = colorOn[3] = -1;
+        colorOff[0] = colorOff[1] = colorOff[2] = colorOff[3] = 0;
 
         String[] meta = args.split("&");
         for(String element: meta){
@@ -54,9 +54,9 @@ public class EffectRandomBlink extends Effect{
             try{
 
                 if(values[0].equalsIgnoreCase("color")){
-                    ColorPicker.getColor(values[1], colorOn, 0);
+                    ColorPicker.getColorRGBW(values[1], colorOn, 0);
                 }else if(values[0].equalsIgnoreCase("back")){
-                    ColorPicker.getColor(values[1], colorOff, 0);
+                    ColorPicker.getColorRGBW(values[1], colorOff, 0);
                 }else if(values[0].equalsIgnoreCase("p")){
                     propability = Integer.parseInt(values[1]);
                 }
@@ -75,16 +75,17 @@ public class EffectRandomBlink extends Effect{
 
         boolean isOn;
 
-        for(int i = 0; i < data.length; i+=3){
+        for(int i = 0; i < data.length; i+=4){
 
-            isOn = /*r.nextInt(1024)*/System.nanoTime() % 0x3FF < propability;
+            isOn = r.nextInt(1024)/*System.nanoTime() % 0x3FF*/ < propability;
 
             data[i + 0] = isOn ?  colorOn[0] : colorOff[0];
             data[i + 1] = isOn ?  colorOn[1] : colorOff[1];
             data[i + 2] = isOn ?  colorOn[2] : colorOff[2];
+            data[i + 3] = isOn ?  colorOn[3] : colorOff[3];
 
         }
 
-        return ColorModel.RGB_MODEL;
+        return ColorModel.RGBW_MODEL;
     }
 }

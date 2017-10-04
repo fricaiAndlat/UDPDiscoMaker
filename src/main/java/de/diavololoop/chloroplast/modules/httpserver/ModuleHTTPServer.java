@@ -162,6 +162,11 @@ public class ModuleHTTPServer extends Module {
 
     }
 
+    @Override
+    public void onQuit() {
+        server.stop();
+    }
+
     private class HTTPServer extends NanoHTTPD {
 
         public HTTPServer(int port) throws IOException {

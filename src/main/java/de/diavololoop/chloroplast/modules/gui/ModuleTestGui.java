@@ -62,8 +62,8 @@ public class ModuleTestGui extends Module {
         xMin = (float)config.getPositions().stream().mapToDouble(pos -> pos.x).min().orElse(0);
         xMax = (float)config.getPositions().stream().mapToDouble(pos -> pos.x).max().orElse(1);
 
-        yMin = (float)config.getPositions().stream().mapToDouble(pos -> pos.y).min().orElse(0);
-        yMax = (float)config.getPositions().stream().mapToDouble(pos -> pos.y).max().orElse(1);
+        yMin = (float)config.getPositions().stream().mapToDouble(pos -> pos.z).min().orElse(0);
+        yMax = (float)config.getPositions().stream().mapToDouble(pos -> pos.z).max().orElse(1);
 
         image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
         graphics = image.getGraphics();
@@ -176,7 +176,7 @@ public class ModuleTestGui extends Module {
 
     private synchronized void drawLED(int r, int g, int b, float x, float z){
         graphics.setColor(new Color(r, g, b));
-        graphics.fillOval((int)((x - xMin) * scale) +10, (int)((z + yMin) * scale) + 10, 20, 20);
+        graphics.fillRect((int)((x - xMin) * scale) + 5, (int)((z + yMin) * scale) + 5, 10, 10);
     }
 
 
@@ -189,8 +189,6 @@ public class ModuleTestGui extends Module {
                 graphics = image.getGraphics();
 
                 scale = (1 - 2 * border) * Math.min(this.getWidth() / (xMax - xMin), this.getHeight() / (yMax - yMin));
-
-
             }
 
             g.drawImage(image, 0, 0, this);
