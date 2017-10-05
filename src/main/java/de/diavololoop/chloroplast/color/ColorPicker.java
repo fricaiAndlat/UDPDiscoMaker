@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by gast2 on 29.09.17.
+ * @author Chloroplast
+ *
+ * ColorPicker is a static helper class, making it easyer to get the rgb(w) representation of a color from string
  */
 public class ColorPicker {
 
@@ -161,7 +163,17 @@ public class ColorPicker {
         COLORS.put("yellowgreen", 0x9acd32);
     }
 
-
+    /**
+     * get the color encoded in this string.
+     *
+     * if the given string equals a named color like "white", "green" or "steelblue", the color is returned.
+     *
+     * otherwise the string will be read as a hexadecimal colorcode.
+     * allowed are for Example "FF0000", "AAFF0A13", "#AABBCC" or "&aabb00
+     *
+     * @param s the name of a color or the hexadecimal reprentation
+     * @return the color encoded in a single integer
+     */
     public static int getColor(String s){
 
         Integer result = COLORS.get(s.trim().toLowerCase());
@@ -198,12 +210,28 @@ public class ColorPicker {
         return result;
     }
 
+    /**
+     * same as getColor(String s), but stores the resulting red, green and blue values in the given array at
+     * offset, offset+1 and offset+2
+     *
+     * @param color the name of a color or the hexadecimal reprentation
+     * @param target the array the values will be stored in
+     * @param offset starting address of resulting color vector
+     */
     public static void getColor(String color, byte[] target, int offset){
         int c = getColor(color);
         target[offset + 0] = (byte)(c >> 16);
         target[offset + 1] = (byte)(c >> 8);
         target[offset + 2] = (byte)c;
     }
+    /**
+     * same as getColor(String s), but stores the resulting red, green, blue and white values in the given array at
+     * offset, offset+1, offset+2 offset+3
+     *
+     * @param color the name of a color or the hexadecimal reprentation
+     * @param target the array the values will be stored in
+     * @param offset starting address of resulting color vector
+     */
     public static void getColorRGBW(String color, byte[] target, int offset){
         int c = getColor(color);
         target[offset + 0] = (byte)(c >> 16);

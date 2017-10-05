@@ -1,9 +1,13 @@
 package de.diavololoop.chloroplast.color;
 
 /**
- * Created by gast2 on 04.10.17.
+ * @author Chloroplast
+ *
+ *
+ * ColorModel for RGBW colors. A color will be interpreted as (red, green, blue, white).
  */
 public class ColorModelRGBW extends ColorModel {
+
     @Override
     public int getLength() {
         return 4;

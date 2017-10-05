@@ -1,7 +1,10 @@
 package de.diavololoop.chloroplast.color;
 
 /**
- * Created by gast2 on 28.09.17.
+ * @author Chloroplast
+ *
+ *
+ * ColorModel for HSV colors. A color will be interpreted as (Hue, Saturation, Value).
  */
 public class ColorModelHSV extends ColorModel{
 
