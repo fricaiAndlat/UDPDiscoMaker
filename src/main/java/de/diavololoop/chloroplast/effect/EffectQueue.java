@@ -10,7 +10,9 @@ import java.util.*;
 import java.util.function.Supplier;
 
 /**
- * Created by gast2 on 04.10.17.
+ * @author Chloroplast
+ *
+ * A Effect which holds many sub effects in many layers
  */
 public class EffectQueue extends Effect {
 
@@ -47,7 +49,12 @@ public class EffectQueue extends Effect {
     public int getPreferedFPS() {
         return 30;
     }
-
+    /**
+     * every time before an effect is used it must be called the init method.
+     *
+     * @param args the queue with its layers encoded in json
+     * @param positions the position of all LEDs available, in the order the output should be
+     */
     @Override
     public void init(String args, List<SpacePosition> positions) {
         this.positions = positions;

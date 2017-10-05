@@ -11,7 +11,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Created by gast2 on 26.09.17.
+ * @author Chloroplast
+ *
+ * Module for communicating over the standard input and output
  */
 public class ModuleCommandline extends Module {
 

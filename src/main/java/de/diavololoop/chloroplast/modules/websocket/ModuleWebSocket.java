@@ -16,7 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by gast2 on 03.10.17.
+ * @author Chloroplast
+ *
+ * Module for creating a WebSocket Server. Can change Effects.
  */
 public class ModuleWebSocket extends Module {
 

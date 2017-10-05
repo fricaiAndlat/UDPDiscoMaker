@@ -11,6 +11,34 @@ import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+
+/**
+ * @author Chloroplast
+ *
+ * Wrapper class for external effects.
+ *
+ * its used to wrap external processes descripted by a .stream File in an Effect class.
+ *
+ * All .stream Files must have at least two lines.
+ * first contains the metadata, defined as "name:description:author"
+ * the second line is the command which will be executed. For Example ./effects/MyProgram
+ *
+ * the external programm must print his output to stdout. Be sure that after every line the stream must be flushed.
+ *
+ * first it have to print "ColorEffect_v_1" to be sure this is a compatible program.
+ * then it must print the preferedFPS as a new line.
+ *
+ * after this it should read the number of leds, followed by a new line with the effect arguments, followed by a new
+ * line with an array of all positions printed as floats, seperated with ':'.
+ *
+ * after this initialisation the java core program sends every frame a new line
+ * in the format "u:(long timeafterstart):(int iteration)".
+ *
+ * the extern process should then send all color bytes, prefixed with the name of used colormodel, in one line.
+ * For Example "rgb:r0:g0:b0:r1:g1:b1:r1: .... :gn:bn"
+ *
+ * if the extern process receives a 'q' instead of the update line starting with 'u', it should close.
+ */
 public class EffectWrapperStream extends Effect {
 
     public final static int VERSION = 1;

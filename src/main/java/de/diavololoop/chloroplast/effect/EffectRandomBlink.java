@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Created by gast2 on 29.09.17.
+ * @author Chloroplast
+ *
+ * Simple Effect turning randomly every single led on and off
  */
 public class EffectRandomBlink extends Effect{
 
@@ -37,6 +39,12 @@ public class EffectRandomBlink extends Effect{
         return 25;
     }
 
+    /**
+     * every time before an effect is used it must be called the init method.
+     *
+     * @param args a http parameter encoded list, for example speed=1&light=1&saturation=1&freq=16
+     * @param positions the position of all LEDs available, in the order the output should be
+     */
     @Override
     public void init(String args, List<SpacePosition> positions) {
         propability = 50;

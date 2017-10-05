@@ -6,7 +6,9 @@ import de.diavololoop.chloroplast.config.SpacePosition;
 import java.util.List;
 
 /**
- * Created by gast2 on 29.09.17.
+ * @author Chloroplast
+ *
+ * A simple Rainbow Effect
  */
 public class EffectRainbow extends Effect {
 
@@ -36,6 +38,12 @@ public class EffectRainbow extends Effect {
         return 30;
     }
 
+    /**
+     * every time before an effect is used it must be called the init method.
+     *
+     * @param args a http parameter encoded list, for example speed=1&light=1&saturation=1&freq=16
+     * @param positions the position of all LEDs available, in the order the output should be
+     */
     @Override
     public void init(String args, List<SpacePosition> positions) {
         this.positions = positions;

@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by gast2 on 27.09.17.
+ * @author Chloroplast
+ *
+ * Module for creating a HTTP Server. Can switch Effects over GET Requests.
  */
 public class ModuleHTTPServer extends Module {
 
@@ -167,6 +169,9 @@ public class ModuleHTTPServer extends Module {
         server.stop();
     }
 
+    /**
+     * intern class handling HTTP requests
+     */
     private class HTTPServer extends NanoHTTPD {
 
         public HTTPServer(int port) throws IOException {

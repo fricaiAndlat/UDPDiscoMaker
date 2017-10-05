@@ -8,7 +8,9 @@ import de.diavololoop.chloroplast.config.SpacePosition;
 import java.util.List;
 
 /**
- * Created by gast2 on 26.09.17.
+ * @author Chloroplast
+ *
+ * simply displays one color on all leds
  */
 public class EffectSimpleColor extends Effect {
 
@@ -34,6 +36,12 @@ public class EffectSimpleColor extends Effect {
         return 0;
     }
 
+    /**
+     * every time before an effect is used it must be called the init method.
+     *
+     * @param args the color
+     * @param positions the position of all LEDs available, in the order the output should be
+     */
     @Override
     public void init(String args, List<SpacePosition> positions) {
         ColorPicker.getColorRGBW(args, rgbw, 0);

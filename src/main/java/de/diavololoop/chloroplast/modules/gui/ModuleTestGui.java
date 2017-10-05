@@ -17,7 +17,10 @@ import java.net.SocketException;
 import java.util.List;
 
 /**
- * Created by gast2 on 29.09.17.
+ * @author Chloroplast
+ *
+ * Module for testing effects without LED-Stripes. Can be used with other Programs sending UDPPackets
+ * Opens a Swing-Frame displaying the LED-States.
  */
 public class ModuleTestGui extends Module {
 

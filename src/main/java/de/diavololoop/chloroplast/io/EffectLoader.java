@@ -12,13 +12,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by gast2 on 26.09.17.
+ * @author Chloroplast
+ *
+ * Loader for Effects. Read Effects from programroot/effects/.
  */
 public class EffectLoader {
 
     File effectDir;
     private Map effects = new HashMap<Effect, Class<?>>();
 
+    /**
+     * creates an EffectLoader with the give root directory
+     *
+     * @param root the directory in which the effects directory is located
+     */
     public EffectLoader(File root){
 
         effectDir = new File(root, "effects");
@@ -35,10 +42,19 @@ public class EffectLoader {
 
     }
 
+    /**
+     * map of all currently loaded effects (effectname -> effect)
+     *
+     * @return map of  effects
+     */
     public Map<String, Effect> allEffects(){
         return effects;
     }
 
+
+    /**
+     * drop all loaded effects and reload effects from effect directory
+     */
     public void loadEffects(){
 
         effects.clear();
@@ -89,7 +105,7 @@ public class EffectLoader {
 
     }
 
-    public void compileEffect(File file){
+    private void compileEffect(File file){
         try {
 
             Process p = Runtime.getRuntime().exec("javac "+file.getAbsolutePath());
@@ -108,7 +124,7 @@ public class EffectLoader {
         }
     }
 
-    public void loadCompiledEffect(File file){
+    private void loadCompiledEffect(File file){
         String className = file.getAbsolutePath()
                 .replace('\\', '/')
                 .replaceFirst(effectDir.getAbsolutePath().replace('\\', '/'), "")
