@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * @author Chloroplast
+ */
 public class Main {
 
     public static void main(String[] args) throws IOException {
@@ -24,7 +27,7 @@ public class Main {
             printUsage();
             return;
         }
-
+        //define (empty) variables
         DiscoMaker program = new DiscoMaker();
         Config config = null;
         boolean redirectHosts = false;
@@ -83,11 +86,14 @@ public class Main {
             config.redirectAllToLocalhost();
         }
 
+        //set up callbacks
         Consumer<Effect> effectChanged = (effect) -> modules.stream().filter(m -> m.isLoaded()).forEach(m -> m.onEffectChange(effect));
         Runnable onQuit = () -> modules.stream().filter(m -> m.isLoaded()).forEach(m -> m.onQuit());
         Runnable onReload = () -> modules.stream().filter(m -> m.isLoaded()).forEach(m -> m.onReaload());
 
         program.init(root, config, effectChanged, onQuit, onReload);
+
+        //start all modules, prints all errors to console
         modules.stream().filter(m -> m.isLoaded()).map(m -> m.onStart(root)).filter(s -> s != null).forEach(s -> {
                 System.err.println(s);
                 return;
@@ -95,6 +101,9 @@ public class Main {
 
     }
 
+    /**
+     * prints all console parameters with description
+     */
     public static void printUsage(){
         System.out.println("usage <args>");
         System.out.println("\t[-h]          \tprints this help");

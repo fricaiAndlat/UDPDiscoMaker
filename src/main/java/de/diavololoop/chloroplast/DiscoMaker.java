@@ -11,7 +11,14 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 /**
- * Created by gast2 on 26.09.17.
+ * @author Chlrooplast
+ *
+ * Disco maker ist the core class.
+ * Its responsible for controlling:
+ * - The Sender, which sends the data to the LED-Stripes
+ * - The EffectLoader, loading all Effects and provide them by name
+ * - the EffectPlayer, using the effects for creating color data
+ *
  */
 public class DiscoMaker {
 
@@ -28,6 +35,19 @@ public class DiscoMaker {
     private Runnable onQuit;
     private Runnable onReload;
 
+
+    /**
+     * in order to start the program its necessary to create an instace of this class. However, to be functional the
+     * init method must be called exact one time before using other mothods.
+     *
+     * @param root the runtime root, where to search other files like Effects or config files.
+     * @param configuration the configuration of all leds and other settings
+     * @param effectChanged Callback if a effect is changed. Receives the newly assigned Effcet
+     * @param onQuit Callback for the program should exit
+     * @param onReload Callback for the reload action
+     *
+     * @throws IllegalStateException throws an exception when init is called more than once
+     */
     public void init(File root, Config configuration, Consumer<Effect> effectChanged, Runnable onQuit, Runnable onReload){
         if(isReady){
             throw new IllegalStateException("can only init one time");
@@ -59,7 +79,13 @@ public class DiscoMaker {
     }
 
 
-
+    /**
+     * using the EffectLoader its easy to find Effects
+     *
+     * @return the current EffectLoader
+     *
+     * @throws IllegalArgumentException throws an exception when init is not called
+     */
     public EffectLoader getEffectLoader(){
         if(!isReady){
             throw new IllegalStateException("init must be called first");
@@ -67,6 +93,13 @@ public class DiscoMaker {
         return effectLoader;
     }
 
+    /**
+     * Sets and play a given Effect.
+     * This method is Thread Safe
+     *
+     * @param effect the Effect next to play
+     * @param args optional arguments for the Effect for Example the color or speed
+     */
     public synchronized void setEffect(Effect effect, String args){
         if(!isReady){
             throw new IllegalStateException("init must be called first");
@@ -80,6 +113,12 @@ public class DiscoMaker {
         onEffectChanged.accept(effect);
     }
 
+    /**
+     *
+     * @return the current setted Effect
+     *
+     * @throws IllegalArgumentException throws an exception when init is not called
+     */
     public Effect getEffect(){
         if(!isReady){
             throw new IllegalStateException("init must be called first");
@@ -87,6 +126,11 @@ public class DiscoMaker {
         return currentEffect;
     }
 
+    /**
+     * Shutdown the Project and closes all open servers
+     *
+     * @throws IllegalArgumentException throws an exception when init is not called
+     */
     public void exit() {
         if(!isReady){
             throw new IllegalStateException("init must be called first");
@@ -110,11 +154,27 @@ public class DiscoMaker {
         System.exit(0);
     }
 
+    /**
+     * @return the Config the program is started with
+     *
+     * @throws IllegalArgumentException throws an exception when init is not called
+     */
     public Config getConfig() {
+        if(!isReady){
+            throw new IllegalStateException("init must be called first");
+        }
         return config;
     }
 
+    /**
+     * reload all resources, except the Config
+     *
+     * @throws IllegalArgumentException throws an exception when init is not called
+     */
     public void reload(){
+        if(!isReady){
+            throw new IllegalStateException("init must be called first");
+        }
         effectLoader.loadEffects();
         onReload.run();
     }

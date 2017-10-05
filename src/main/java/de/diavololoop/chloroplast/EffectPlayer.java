@@ -7,7 +7,10 @@ import de.diavololoop.chloroplast.io.Sender;
 import java.util.Arrays;
 
 /**
- * Created by gast2 on 27.09.17.
+ * @author Chloroplast
+ *
+ * EffectPlayer plays throug an effect. it calls the effect and hands over the data to a sender
+ *
  */
 public class EffectPlayer {
 
@@ -20,6 +23,11 @@ public class EffectPlayer {
     private byte[] data;
     private byte[] dataLast;
 
+    /**
+     * @param sender the Object used for sending data
+     * @param init initial Effect
+     * @param bufferLen length of the buffer for the effects
+     */
     public EffectPlayer(Sender sender, Effect init, int bufferLen){
 
         this.sender = sender;
@@ -33,11 +41,22 @@ public class EffectPlayer {
 
     }
 
+    /**
+     * sets the given effect and start playing it
+     *
+     * @param effect
+     */
     public void play(Effect effect){
         this.effect = effect;
         playThread.interrupt();
 
     }
+
+    /**
+     *
+     * shut down playing thread
+     *
+     */
     public void stop(){
 
         shouldStop = true;
