@@ -1,3 +1,4 @@
+    <script>
         function effect_queue_darude() {
 
 			effectQueue = {
@@ -115,6 +116,73 @@
 
 			soundboard("runninginthe90s.wav");
 		}
+		
+		function effect_queue_carelesswhisper() {
+			effectQueue = {
+				"layer": [
+					{
+						"effects": [
+							{
+								"name": "colorblink",
+								"length": 9000,
+								"fade": 1000,
+								"cycleLen": 1558,
+								"args": "AA0000,AA00AA",
+								"scaleX": 0,
+								"scaleY": 400,
+								"scaleZ": 1
+							},
+							{
+								"name": "colorblink",
+								"length": 99999999,
+								"fade": 0,
+								"cycleLen": 99999999,
+								"args": "black",
+								"scaleX": 99999999,
+								"scaleY": 99999999,
+								"scaleZ": 1
+							}
+						]
+					},
+					{
+						"effects": [
+							{
+								"name": "none",
+								"length": 390,
+								"cycleLen": 1450,
+								"fade": 0,
+
+							},
+							{
+								"name": "colorblink",
+								"length": 9000,
+								"fade": 1000,
+								"cycleLen": 1558,
+								"args": "FFFF00AA,FF00FF",
+								"scaleX": 0,
+								"scaleY": 2000,
+								"scaleZ": 1
+							},
+							{
+								"name": "colorblink",
+								"length": 99999999,
+								"fade": 0,
+								"cycleLen": 99999999,
+								"args": "black",
+								"scaleX": 99999999,
+								"scaleY": 99999999,
+								"scaleZ": 1
+							}
+						]
+					}
+				]
+			};
+			
+			
+			effect("EffectQueue", JSON.stringify(effectQueue));
+			
+			soundboard("carelesswhisper.wav");
+		}
 
 		function soundboard(filename) {
 			var xmlhttp = new XMLHttpRequest();
@@ -128,3 +196,4 @@
 			xmlhttp.open("GET", url, true);
 			xmlhttp.send();
 		}
+	</script>
