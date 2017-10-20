@@ -70,11 +70,13 @@ public class EffectLoader {
         Effect rainbow = new EffectRainbow();
         Effect blinker = new EffectRandomBlink();
         Effect queue = new EffectQueue();
+        Effect spectrum = new EffectSpectrum();
 
         effects.put(basicColor.getName(), basicColor);
         effects.put(rainbow.getName(), rainbow);
         effects.put(blinker.getName(), blinker);
         effects.put(queue.getName(), queue);
+        effects.put(spectrum.getName(), spectrum);
 
 
 
