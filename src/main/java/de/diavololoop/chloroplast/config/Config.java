@@ -58,7 +58,7 @@ public class Config {
             for(Stripe stripe: stripeList){
                 stripe.setOffset(currentOffset);
                 int maxLength = ColorModel.maxByteLength();
-                currentOffset += stripe.getPositions().size() * maxLength;
+                currentOffset += stripe.getPositions().size();
             }
 
         } catch (IOException e) {
@@ -127,7 +127,7 @@ public class Config {
         }
 
         public void copyData(byte[] in, byte[] out, ColorModel source){
-            source.convert(in, offset, out, 0, positions.size(), byteOrder);
+            source.convert(in, offset*source.getLength(), out, 0, positions.size(), byteOrder);
 
             switch (byteOrder) {
 

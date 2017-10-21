@@ -115,7 +115,7 @@ public abstract class ColorModel {
         }
         for(int i = 0; i < length; ++i){
             convert(in, offsetIn, out, offsetOut, target);
-            offsetIn  += getByteOrder().length();
+            offsetIn  += this.getByteOrder().length();
             offsetOut += target.length();
 
         }
