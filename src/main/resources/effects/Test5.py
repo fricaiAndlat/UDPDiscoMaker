@@ -4,25 +4,25 @@ print("30", flush=True)
 
 #init
 nleds = int(input(""))
-args = input();
-positions = input().split(":");
+args = input()
+positions = input().split(":")
 
 #update loop
-run = True;
-
+run = True
+note
 while run:
-	updateArgs = input().split(":");
+	updateArgs = input().split(":")
 	
 	if (updateArgs[0] == "q"):
-		run = False;
+		run = False
 	else:
-		time = int(updateArgs[1]);
-		step = int(updateArgs[2]);
+		time = int(updateArgs[1])
+		step = int(updateArgs[2])
 		
-		print("rgb", end='');
+		print("rgb", end='')
 		
 		for x in range(0, nleds):
-			print(":{0}:{1}:{2}".format(step%256, step%256, step%256), end='');
+			print(":{0}:{1}:{2}".format(step%256, step%256, step%256), end='')
 			
-		print(flush=True);
+		print(flush=True)
 

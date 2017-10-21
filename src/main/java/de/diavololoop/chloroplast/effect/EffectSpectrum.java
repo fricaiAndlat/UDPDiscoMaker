@@ -2,15 +2,15 @@ package de.diavololoop.chloroplast.effect;
 
 import de.diavololoop.chloroplast.color.ColorModel;
 import de.diavololoop.chloroplast.config.SpacePosition;
+import org.jtransforms.fft.DoubleFFT_1D;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.SourceDataLine;
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,7 +25,7 @@ public class EffectSpectrum extends Effect {
     @Override
     public void init(String args, List<SpacePosition> positions) {
 
-        try {
+/*        try {
             ServerSocket ss = new ServerSocket(1234);
 
 
@@ -38,9 +38,9 @@ public class EffectSpectrum extends Effect {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
 
-/*
+
         double[] input = new double[20];
         for(int i = 0; i < input.length; ++i){
             double t = i/20.0;
@@ -50,7 +50,7 @@ public class EffectSpectrum extends Effect {
         System.out.println(Arrays.toString(input));
 
         DoubleFFT_1D fftDo = new DoubleFFT_1D(input.length);
-        double[] fft = new double[input.length * 2];
+        double[] fft = new double[100 * 2];
         System.arraycopy(input, 0, fft, 0, input.length);
         //fftDo.realForwardFull(fft);
         fftDo.realForward(fft);
@@ -68,7 +68,7 @@ public class EffectSpectrum extends Effect {
 
         for(int i = 0; i < input.length; ++i){
             System.out.println(Math.round(fft[2*i]*10000)/10000 +"\t"+ Math.round(fft[2*i+1]*10000)/10000);
-        }*/
+        }
 
 
     }
