@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class EffectColorwave extends Effect {
     List<SpacePosition> positions;
-    byte[] color_byte = new byte[4];
+    byte [] colorByte = new byte[4];
     int [] rgbw = new int [4];
     double frequency = 100;
     double speed = 1;
@@ -41,7 +41,7 @@ public class EffectColorwave extends Effect {
     @Override
     public void init(String args, List<SpacePosition> positionList){
         this.positions = positionList;
-        color_byte[0] = color_byte[1] = color_byte[2] = color_byte[3] = (byte) 0xFF;
+        colorByte[0] = colorByte[1] = colorByte[2] = colorByte[3] = (byte) 0xFF;
         String[] meta = args.split("&");
         for(String element: meta){
 
@@ -53,9 +53,9 @@ public class EffectColorwave extends Effect {
             try{
 
                 if(values[0].equalsIgnoreCase("color")) {
-                    ColorPicker.getColorRGBW(values[1], color_byte, 0);
+                    ColorPicker.getColorRGBW(values[1], colorByte, 0);
                     for(int i = 0; i < 4; i++){
-                        rgbw[i] = color_byte[i] & 0xFF;
+                        rgbw[i] = colorByte[i] & 0xFF;
                     }
                 }else if(values[0].equalsIgnoreCase("freq")){
                     frequency = Double.parseDouble(values[1]);
@@ -81,9 +81,9 @@ public class EffectColorwave extends Effect {
     public ColorModel update(long time, int step, byte[] data) {
         int offset = 0;
         for(SpacePosition pos : positions){
-            double wave_function = (.5 + .5 * Math.sin(((pos.z + pos.y + pos.x) * frequency * .001 - step * 0.01 * speed)));
+            double waveFunction = (.5 + .5 * Math.sin(((pos.z + pos.y + pos.x) * frequency * .001 - step * 0.01 * speed)));
             for(int i = 0; i < 4 ; i++){
-                data[offset + i] = (byte) (rgbw[i] * wave_function);
+                data[offset + i] = (byte) (rgbw[i] * waveFunction);
             }
             offset += 4;
         }
